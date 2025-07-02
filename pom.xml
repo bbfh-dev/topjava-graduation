@@ -8,12 +8,12 @@
         <version>3.3.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>ru.javaops</groupId>
-    <artifactId>bootjava</artifactId>
+    <groupId>me.bbfh</groupId>
+    <artifactId>graduation</artifactId>
     <version>1.0</version>
-    <name>BootJava</name>
-    <description>Spring Boot 3.x HATEOAS application (BootJava)</description>
-    <url>https://javaops.ru/view/bootjava</url>
+    <name>Graduation</name>
+    <description>Graduation project for the topjava course</description>
+    <url>https://javaops.ru/view/topjava</url>
 
     <properties>
         <java.version>21</java.version>
