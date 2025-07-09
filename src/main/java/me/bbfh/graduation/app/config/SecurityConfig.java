@@ -2,9 +2,14 @@ package me.bbfh.graduation.app.config;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.bbfh.graduation.app.AuthUser;
+import me.bbfh.graduation.user.model.Role;
+import me.bbfh.graduation.user.model.User;
+import me.bbfh.graduation.user.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,16 +19,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import me.bbfh.graduation.app.AuthUser;
-import me.bbfh.graduation.user.model.Role;
-import me.bbfh.graduation.user.model.User;
-import me.bbfh.graduation.user.repository.UserRepository;
 
 import java.util.Optional;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@EnableMethodSecurity
 @EnableWebSecurity
 @Slf4j
 @AllArgsConstructor

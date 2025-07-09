@@ -7,13 +7,11 @@ import me.bbfh.graduation.restaurant.RestaurantUtil;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.to.RestaurantTo;
-import me.bbfh.graduation.user.UsersUtil;
-import me.bbfh.graduation.user.model.Role;
 import me.bbfh.graduation.user.model.User;
-import me.bbfh.graduation.user.to.UserTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,10 +34,8 @@ public class RestaurantController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public User getAll(@AuthenticationPrincipal AuthUser authUser) {
-        if (!authUser.hasRole(Role.ADMIN)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
-        }
         log.info("getAll {}", authUser);
         return authUser.getUser();
     }
