@@ -56,8 +56,7 @@ public class RestaurantController {
         log.info("create {}", restaurantTo);
         checkNew(restaurantTo);
         Restaurant created = repository.save(RestaurantUtil.createNewFromTo(restaurantTo));
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL).build().toUri();
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath().path(REST_URL).build().toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 }
