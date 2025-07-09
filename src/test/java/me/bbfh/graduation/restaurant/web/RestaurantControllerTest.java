@@ -19,13 +19,25 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static me.bbfh.graduation.restaurant.RestaurantTestData.RESTAURANT_MATCHER;
 import static me.bbfh.graduation.restaurant.web.RestaurantController.REST_URL;
-import static me.bbfh.graduation.user.UserTestData.*;
+import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class RestaurantControllerTest extends AbstractControllerTest {
+    private static final String REST_URL_SLASH = RestaurantController.REST_URL + '/';
+
     @Autowired
     private RestaurantRepository repository;
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + 69)
+                .param("restaurantId", "2"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)

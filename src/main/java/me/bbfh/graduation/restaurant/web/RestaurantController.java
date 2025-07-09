@@ -41,6 +41,13 @@ public class RestaurantController {
         return repository.findAll();
     }
 
+    @GetMapping("/{restaurantId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Restaurant get(@PathVariable int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
+        log.info("get id={} by {}", restaurantId, authUser);
+        return repository.getExisted(restaurantId);
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
