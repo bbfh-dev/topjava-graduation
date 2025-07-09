@@ -7,7 +7,6 @@ import me.bbfh.graduation.restaurant.RestaurantUtil;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.to.RestaurantTo;
-import me.bbfh.graduation.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 import static me.bbfh.graduation.common.validation.ValidationUtil.checkNew;
 
@@ -36,9 +36,9 @@ public class RestaurantController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public User getAll(@AuthenticationPrincipal AuthUser authUser) {
+    public List<Restaurant> getAll(@AuthenticationPrincipal AuthUser authUser) {
         log.info("getAll {}", authUser);
-        return authUser.getUser();
+        return repository.findAll();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
