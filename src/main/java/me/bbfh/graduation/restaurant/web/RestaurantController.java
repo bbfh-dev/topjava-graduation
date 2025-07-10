@@ -60,7 +60,7 @@ public class RestaurantController {
     }
 
     @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public ResponseEntity<Restaurant> update(@PathVariable int restaurantId,
@@ -72,5 +72,14 @@ public class RestaurantController {
         restaurant.setId(restaurantId);
         Restaurant created = repository.save(restaurant);
         return ResponseEntity.ok().body(created);
+    }
+
+    @DeleteMapping(value = "/{restaurantId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public void delete(@PathVariable int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
+        log.info("delete id={} by {}", restaurantId, authUser);
+        repository.deleteExisted(restaurantId);
     }
 }

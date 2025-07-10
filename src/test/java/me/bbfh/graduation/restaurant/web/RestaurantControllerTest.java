@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -112,5 +113,16 @@ public class RestaurantControllerTest extends AbstractControllerTest {
         Restaurant updated = RESTAURANT_MATCHER.readFromJson(action);
         RESTAURANT_MATCHER.assertMatch(updated, restaurant);
         RESTAURANT_MATCHER.assertMatch(repository.getExisted(updated.id()), restaurant);
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void delete() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + RESTAURANTS.getFirst().id()))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        Assert.isTrue(!repository.existsById(RESTAURANTS.getFirst().id()), "restaurant must be deleted");
     }
 }
