@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import static me.bbfh.graduation.restaurant.RestaurantTestData.*;
 import static me.bbfh.graduation.restaurant.web.RestaurantController.REST_URL;
 import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
+import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -124,5 +125,14 @@ public class RestaurantControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         Assert.isTrue(!repository.existsById(RESTAURANTS.getFirst().id()), "restaurant must be deleted");
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getNoPermission() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andReturn();
     }
 }
