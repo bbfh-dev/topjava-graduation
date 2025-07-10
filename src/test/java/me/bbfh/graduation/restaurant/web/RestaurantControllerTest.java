@@ -96,4 +96,21 @@ public class RestaurantControllerTest extends AbstractControllerTest {
         RESTAURANT_MATCHER.assertMatch(created, newRestaurant);
         RESTAURANT_MATCHER.assertMatch(repository.getExisted(newId), newRestaurant);
     }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void update() throws Exception {
+        Restaurant restaurant = RESTAURANTS.getFirst();
+        RestaurantTo newTo = new RestaurantTo(restaurant.getId(), restaurant.getName());
+        ResultActions action = perform(MockMvcRequestBuilders
+                .put(REST_URL_SLASH + restaurant.id())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newTo)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        Restaurant updated = RESTAURANT_MATCHER.readFromJson(action);
+        RESTAURANT_MATCHER.assertMatch(updated, restaurant);
+        RESTAURANT_MATCHER.assertMatch(repository.getExisted(updated.id()), restaurant);
+    }
 }

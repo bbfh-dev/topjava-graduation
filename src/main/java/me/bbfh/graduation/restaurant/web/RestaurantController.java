@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -58,5 +57,20 @@ public class RestaurantController {
         Restaurant created = repository.save(RestaurantUtil.createNewFromTo(restaurantTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath().path(REST_URL).build().toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
+    }
+
+    @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public ResponseEntity<Restaurant> update(@PathVariable int restaurantId,
+                                         @RequestBody @Valid RestaurantTo restaurantTo,
+                                         @AuthenticationPrincipal AuthUser authUser) {
+        log.info("update {} by {}", restaurantTo, authUser);
+        RestaurantUtil.assureIsNew(restaurantTo);
+        Restaurant restaurant = RestaurantUtil.createNewFromTo(restaurantTo);
+        restaurant.setId(restaurantId);
+        Restaurant created = repository.save(restaurant);
+        return ResponseEntity.ok().body(created);
     }
 }
