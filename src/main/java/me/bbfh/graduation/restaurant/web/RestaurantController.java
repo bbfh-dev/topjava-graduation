@@ -10,7 +10,6 @@ import me.bbfh.graduation.restaurant.to.RestaurantTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +33,12 @@ public class RestaurantController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public List<Restaurant> getAll(@AuthenticationPrincipal AuthUser authUser) {
         log.info("getAll {}", authUser);
         return repository.findAll();
     }
 
     @GetMapping("/{restaurantId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public Restaurant get(@PathVariable int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
         log.info("get id={} by {}", restaurantId, authUser);
         return repository.getExisted(restaurantId);
@@ -49,7 +46,6 @@ public class RestaurantController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public ResponseEntity<Restaurant> create(@Valid @RequestBody RestaurantTo restaurantTo) {
         log.info("create {}", restaurantTo);
@@ -61,7 +57,6 @@ public class RestaurantController {
 
     @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public ResponseEntity<Restaurant> update(@PathVariable int restaurantId,
                                          @RequestBody @Valid RestaurantTo restaurantTo,
@@ -76,7 +71,6 @@ public class RestaurantController {
 
     @DeleteMapping(value = "/{restaurantId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void delete(@PathVariable int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
         log.info("delete id={} by {}", restaurantId, authUser);

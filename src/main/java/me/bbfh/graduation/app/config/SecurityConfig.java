@@ -25,7 +25,6 @@ import java.util.Optional;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@EnableMethodSecurity
 @EnableWebSecurity
 @Slf4j
 @AllArgsConstructor
