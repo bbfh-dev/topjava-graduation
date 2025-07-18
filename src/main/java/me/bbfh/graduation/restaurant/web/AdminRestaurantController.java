@@ -16,32 +16,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 import static me.bbfh.graduation.common.validation.ValidationUtil.checkNew;
 
 @RestController
-@RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-public class RestaurantController {
-    static final String REST_URL = "/api/admin/restaurant";
+@Transactional(readOnly = true)
+public class AdminRestaurantController {
+    static final String REST_URL = "/api/admin/restaurants";
 
     protected final RestaurantRepository repository;
 
-    public RestaurantController(RestaurantRepository repository) {
+    public AdminRestaurantController(RestaurantRepository repository) {
         this.repository = repository;
-    }
-
-    @GetMapping
-    public List<Restaurant> getAll(@AuthenticationPrincipal AuthUser authUser) {
-        log.info("getAll {}", authUser);
-        return repository.findAll();
-    }
-
-    @GetMapping("/{restaurantId}")
-    public Restaurant get(@PathVariable int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
-        log.info("get id={} by {}", restaurantId, authUser);
-        return repository.getExisted(restaurantId);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

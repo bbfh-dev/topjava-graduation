@@ -20,40 +20,44 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static me.bbfh.graduation.restaurant.RestaurantTestData.*;
-import static me.bbfh.graduation.restaurant.web.RestaurantController.REST_URL;
 import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
 import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class RestaurantControllerTest extends AbstractControllerTest {
-    private static final String REST_URL_SLASH = RestaurantController.REST_URL + '/';
+
+    private static final String ADMIN_REST_URL_SLASH = AdminRestaurantController.REST_URL + '/';
+    private static final String PROFILE_REST_URL_SLASH = ProfileRestaurantController.REST_URL + '/';
 
     @Autowired
     private RestaurantRepository repository;
 
     @BeforeEach
-    public void populate() {
+    public void repopulate() {
         repository.deleteAll();
-        RESTAURANTS = repository.saveAll(RESTAURANTS);
+        List<Restaurant> restaurants = repository.saveAll(RESTAURANTS);
+        RESTAURANT_1.setId(restaurants.get(0).getId());
+        RESTAURANT_2.setId(restaurants.get(1).getId());
+        RESTAURANT_3.setId(restaurants.get(2).getId());
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void get() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL_SLASH + RESTAURANTS.getFirst().id()))
+        ResultActions action = perform(MockMvcRequestBuilders.get(PROFILE_REST_URL_SLASH + RESTAURANT_1.id()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         Restaurant created = RESTAURANT_MATCHER.readFromJson(action);
-        RESTAURANT_MATCHER.assertMatch(created, RESTAURANTS.getFirst());
-        RESTAURANT_MATCHER.assertMatch(repository.getExisted(created.id()), RESTAURANTS.getFirst());
+        RESTAURANT_MATCHER.assertMatch(created, RESTAURANT_1);
+        RESTAURANT_MATCHER.assertMatch(repository.getExisted(created.id()), RESTAURANT_1);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + RESTAURANT_ID_UNKNOWN))
+        perform(MockMvcRequestBuilders.get(PROFILE_REST_URL_SLASH + RESTAURANT_ID_UNKNOWN))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -62,7 +66,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getAll() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL))
+        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileRestaurantController.REST_URL))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -82,11 +86,20 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
+    void noPermission() throws Exception {
+        perform(MockMvcRequestBuilders.get(ADMIN_REST_URL_SLASH + RESTAURANT_1.id()))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andReturn();
+    }
+
+    @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void create() throws Exception {
-        RestaurantTo newTo = new RestaurantTo(null, RESTAURANT_NAME_3);
+        RestaurantTo newTo = new RestaurantTo(null, RESTAURANT_NEW.getName());
         Restaurant newRestaurant = RestaurantUtil.createNewFromTo(newTo);
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+        ResultActions action = perform(MockMvcRequestBuilders.post(AdminRestaurantController.REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTo)))
                 .andDo(print())
@@ -102,10 +115,10 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void update() throws Exception {
-        Restaurant restaurant = RESTAURANTS.getFirst();
+        Restaurant restaurant = RESTAURANT_1;
         RestaurantTo newTo = new RestaurantTo(restaurant.getId(), restaurant.getName());
         ResultActions action = perform(MockMvcRequestBuilders
-                .put(REST_URL_SLASH + restaurant.id())
+                .put(ADMIN_REST_URL_SLASH + restaurant.id())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTo)))
                 .andDo(print())
@@ -119,20 +132,11 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + RESTAURANTS.getFirst().id()))
+        perform(MockMvcRequestBuilders.delete(ADMIN_REST_URL_SLASH + RESTAURANT_1.id()))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andReturn();
 
-        Assert.isTrue(!repository.existsById(RESTAURANTS.getFirst().id()), "restaurant must be deleted");
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getNoPermission() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
-                .andDo(print())
-                .andExpect(status().isForbidden())
-                .andReturn();
+        Assert.isTrue(!repository.existsById(RESTAURANT_1.id()), "restaurant must be deleted");
     }
 }
