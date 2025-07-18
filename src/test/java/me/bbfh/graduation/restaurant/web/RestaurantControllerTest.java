@@ -6,6 +6,7 @@ import me.bbfh.graduation.restaurant.RestaurantUtil;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.to.RestaurantTo;
+import org.checkerframework.common.value.qual.IntRange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static me.bbfh.graduation.restaurant.RestaurantTestData.*;
 import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
@@ -37,9 +39,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     public void repopulate() {
         repository.deleteAll();
         List<Restaurant> restaurants = repository.saveAll(RESTAURANTS);
-        RESTAURANT_1.setId(restaurants.get(0).getId());
-        RESTAURANT_2.setId(restaurants.get(1).getId());
-        RESTAURANT_3.setId(restaurants.get(2).getId());
+        IntStream.range(0, restaurants.size()).forEach(i -> RESTAURANTS.get(i).setId(restaurants.get(i).getId()));
     }
 
     @Test
