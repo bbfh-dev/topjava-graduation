@@ -12,7 +12,7 @@ public class RestaurantUtil {
         return new Restaurant(null, restaurantTo.getName());
     }
 
-    public static void assureIsNew(RestaurantTo restaurantTo) {
+    public static void assureIsNotNew(RestaurantTo restaurantTo) {
         if (restaurantTo.isNew()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "restaurant must not be new, use /create");
         }

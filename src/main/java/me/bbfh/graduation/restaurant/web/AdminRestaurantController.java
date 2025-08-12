@@ -50,7 +50,7 @@ public class AdminRestaurantController {
                                          @RequestBody @Valid RestaurantTo restaurantTo,
                                          @AuthenticationPrincipal AuthUser authUser) {
         log.info("update {} by {}", restaurantTo, authUser);
-        RestaurantUtil.assureIsNew(restaurantTo);
+        RestaurantUtil.assureIsNotNew(restaurantTo);
         Restaurant restaurant = RestaurantUtil.createNewFromTo(restaurantTo);
         restaurant.setId(restaurantId);
         Restaurant created = repository.save(restaurant);
