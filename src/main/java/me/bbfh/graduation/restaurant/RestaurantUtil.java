@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 @UtilityClass
 public class RestaurantUtil {
     public static Restaurant createNewFromTo(RestaurantTo restaurantTo) {
-        return new Restaurant(null, restaurantTo.getName());
+        return new Restaurant(restaurantTo.getId(), restaurantTo.getName());
     }
 
     public static void assureIsNotNew(RestaurantTo restaurantTo) {
