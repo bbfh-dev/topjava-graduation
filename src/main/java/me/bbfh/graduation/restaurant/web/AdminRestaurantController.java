@@ -47,8 +47,8 @@ public class AdminRestaurantController {
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     public ResponseEntity<Restaurant> update(@PathVariable int restaurantId,
-                                         @RequestBody @Valid RestaurantTo restaurantTo,
-                                         @AuthenticationPrincipal AuthUser authUser) {
+                                             @RequestBody @Valid RestaurantTo restaurantTo,
+                                             @AuthenticationPrincipal AuthUser authUser) {
         log.info("update {} by {}", restaurantTo, authUser);
         RestaurantUtil.assureIsNotNew(restaurantTo);
         Restaurant restaurant = RestaurantUtil.createNewFromTo(restaurantTo);
