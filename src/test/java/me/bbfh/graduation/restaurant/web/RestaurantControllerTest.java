@@ -6,7 +6,6 @@ import me.bbfh.graduation.restaurant.RestaurantUtil;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.to.RestaurantTo;
-import org.checkerframework.common.value.qual.IntRange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
