@@ -35,9 +35,13 @@ public class MenuTestData {
     public static List<Dish> DISHES = List.of(DISH_1, DISH_2, DISH_3);
 
     public static MenuTo getNewTo() {
-        return new MenuTo(null, LocalDate.now(), RESTAURANTS.getFirst().id(), List.of(
+        return new MenuTo(null, LocalDate.now(), RESTAURANTS.getFirst().id(), getNewDishes());
+    }
+
+    public static List<MenuTo.DishTo> getNewDishes() {
+        return List.of(
                 new MenuTo.DishTo(null, "Example Dish #A", BigDecimal.valueOf(12.0f)),
                 new MenuTo.DishTo(null, "Example Dish #B", BigDecimal.valueOf(50.0f))
-        ));
+        );
     }
 }

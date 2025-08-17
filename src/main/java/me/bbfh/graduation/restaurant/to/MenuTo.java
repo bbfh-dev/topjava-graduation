@@ -61,5 +61,9 @@ public class MenuTo extends BaseTo implements HasId {
             super(dish.getId(), dish.getName());
             this.price = dish.getPrice();
         }
+
+        public Dish toModel(Menu menu) {
+            return new Dish(id, name, price, menu);
+        }
     }
 }

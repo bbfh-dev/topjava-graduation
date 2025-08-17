@@ -1,6 +1,7 @@
 package me.bbfh.graduation.restaurant.web;
 
 import me.bbfh.graduation.AbstractControllerTest;
+import me.bbfh.graduation.common.util.JsonUtil;
 import me.bbfh.graduation.restaurant.MenuUtil;
 import me.bbfh.graduation.restaurant.model.Dish;
 import me.bbfh.graduation.restaurant.model.Menu;
@@ -9,9 +10,11 @@ import me.bbfh.graduation.restaurant.repository.DishRepository;
 import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.to.MenuTo;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -24,6 +27,7 @@ import java.util.stream.IntStream;
 import static me.bbfh.graduation.restaurant.MenuTestData.*;
 import static me.bbfh.graduation.restaurant.RestaurantTestData.RESTAURANTS;
 import static me.bbfh.graduation.restaurant.RestaurantTestData.RESTAURANT_1;
+import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
 import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -107,5 +111,34 @@ public class MenuControllerTest extends AbstractControllerTest {
 
         MENU_TO_MATCHER.assertMatch(created, expected);
         MENU_TO_MATCHER.assertMatch(MenuUtil.getTo(menuRepository.getExisted(created.id()), dishRepository), expected);
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void create() throws Exception {
+        MenuTo newTo = getNewTo();
+        Assertions.assertNotNull(newTo.getRestaurantId());
+        Restaurant restaurantRef = restaurantRepository.getReferenceById(newTo.getRestaurantId());
+        Menu newMenu = MenuUtil.getModel(newTo, restaurantRef);
+
+        ResultActions action = perform(MockMvcRequestBuilders.post(AdminMenuController.REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newTo)))
+                .andDo(print())
+                .andExpect(status().isCreated());
+
+        MenuTo createdTo = MENU_TO_MATCHER.readFromJson(action);
+        Menu created = MenuUtil.getModel(createdTo, restaurantRef);
+        int newId = created.id();
+        newMenu.setId(newId);
+        newTo.setId(newId);
+        IntStream.range(0, newTo.getDishes().size()).forEach(i -> {
+            MenuTo.DishTo dishTo = newTo.getDishes().get(i);
+            dishTo.setId(createdTo.getDishes().get(i).getId());
+        });
+
+        MENU_TO_MATCHER.assertMatch(createdTo, newTo);
+        MENU_MATCHER.assertMatch(created, newMenu);
+        MENU_MATCHER.assertMatch(menuRepository.getExisted(newId), newMenu);
     }
 }
