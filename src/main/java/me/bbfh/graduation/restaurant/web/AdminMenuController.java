@@ -2,6 +2,7 @@ package me.bbfh.graduation.restaurant.web;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import me.bbfh.graduation.app.AuthUser;
 import me.bbfh.graduation.common.error.IllegalRequestDataException;
 import me.bbfh.graduation.restaurant.MenuUtil;
 import me.bbfh.graduation.restaurant.model.Dish;
@@ -13,6 +14,7 @@ import me.bbfh.graduation.restaurant.to.MenuTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -94,5 +96,14 @@ public class AdminMenuController {
         return new MenuTo(menu, dishes.stream()
                 .map(MenuTo.DishTo::new)
                 .toList());
+    }
+
+    @DeleteMapping(value = "/{menuId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
+    public void delete(@PathVariable int menuId, @AuthenticationPrincipal AuthUser authUser) {
+        log.info("delete id={} by {}", menuId, authUser);
+        dishRepository.deleteAll(menuId);
+        menuRepository.deleteExisted(menuId);
     }
 }

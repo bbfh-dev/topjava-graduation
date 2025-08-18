@@ -188,4 +188,25 @@ public class MenuControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
     }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void delete() throws Exception {
+        perform(MockMvcRequestBuilders.delete(AdminMenuController.REST_URL + "/" + MENU_2.getId()))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        Assertions.assertFalse(menuRepository.existsById(MENU_2.getId()));
+        Assertions.assertFalse(dishRepository.existsById(DISH_3.getId()));
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void deleteNotExist() throws Exception {
+        perform(MockMvcRequestBuilders.delete(AdminMenuController.REST_URL + "/" + MENU_NOT_EXIST_ID))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
 }
