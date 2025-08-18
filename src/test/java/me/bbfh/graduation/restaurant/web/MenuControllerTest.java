@@ -141,4 +141,47 @@ public class MenuControllerTest extends AbstractControllerTest {
         MENU_MATCHER.assertMatch(created, newMenu);
         MENU_MATCHER.assertMatch(menuRepository.getExisted(newId), newMenu);
     }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void update() throws Exception {
+        MenuTo updatedTo = getUpdatedTo();
+        Assertions.assertNotNull(updatedTo.getRestaurantId());
+        Restaurant restaurantRef = restaurantRepository.getReferenceById(updatedTo.getRestaurantId());
+        Menu updatedMenu = MenuUtil.getModel(updatedTo, restaurantRef);
+
+        ResultActions action = perform(MockMvcRequestBuilders.put(AdminMenuController.REST_URL + "/" + MENU_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        MenuTo responseMenuTo = MENU_TO_MATCHER.readFromJson(action);
+        Menu responseMenu = MenuUtil.getModel(responseMenuTo, restaurantRef);
+        int newId = responseMenu.id();
+        updatedMenu.setId(newId);
+        updatedTo.setId(newId);
+        IntStream.range(0, updatedTo.getDishes().size()).forEach(i -> {
+            MenuTo.DishTo dishTo = updatedTo.getDishes().get(i);
+            dishTo.setId(responseMenuTo.getDishes().get(i).getId());
+        });
+
+        MENU_TO_MATCHER.assertMatch(responseMenuTo, updatedTo);
+        MENU_MATCHER.assertMatch(responseMenu, updatedMenu);
+        MENU_MATCHER.assertMatch(menuRepository.getExisted(newId), updatedMenu);
+        Assertions.assertNull(dishRepository.findById(DISH_2.getId()).orElse(null));
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateNotExist() throws Exception {
+        MenuTo updatedTo = getUpdatedTo();
+        updatedTo.setId(MENU_NOT_EXIST_ID);
+        perform(MockMvcRequestBuilders.put(AdminMenuController.REST_URL + "/" + MENU_NOT_EXIST_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn();
+    }
 }

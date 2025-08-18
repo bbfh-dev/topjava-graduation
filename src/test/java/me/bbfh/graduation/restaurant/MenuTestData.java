@@ -38,6 +38,18 @@ public class MenuTestData {
         return new MenuTo(null, LocalDate.now(), RESTAURANTS.getFirst().id(), getNewDishes());
     }
 
+    public static MenuTo getUpdatedTo() {
+        return new MenuTo(
+                MENU_1.getId(),
+                MENU_1.getRelevancyDate(),
+                MENU_1.getRestaurant().getId(),
+                List.of(
+                        new MenuTo.DishTo(DISH_1.getId(), "Updated Dish #1", BigDecimal.valueOf(10.5)),
+                        new MenuTo.DishTo(null, "New Dish", BigDecimal.valueOf(8.35))
+                )
+        );
+    }
+
     public static List<MenuTo.DishTo> getNewDishes() {
         return List.of(
                 new MenuTo.DishTo(null, "Example Dish #A", BigDecimal.valueOf(12.0f)),
