@@ -14,8 +14,6 @@ import static me.bbfh.graduation.restaurant.RestaurantTestData.RESTAURANTS;
 public class MenuTestData {
     public static final MatcherFactory.Matcher<MenuTo> MENU_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(MenuTo.class);
     public static final MatcherFactory.Matcher<Menu> MENU_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Menu.class);
-    public static final MatcherFactory.Matcher<Dish> DISH_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Dish.class);
-    public static final MatcherFactory.Matcher<MenuTo.DishTo> DISH_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(MenuTo.DishTo.class);
 
     private static final int MENU1_ID = 1;
 
