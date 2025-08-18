@@ -132,8 +132,10 @@ public class MenuControllerTest extends AbstractControllerTest {
         int newId = created.id();
         newMenu.setId(newId);
         newTo.setId(newId);
+        Assertions.assertNotNull(newTo.getDishes());
         IntStream.range(0, newTo.getDishes().size()).forEach(i -> {
             MenuTo.DishTo dishTo = newTo.getDishes().get(i);
+            Assertions.assertNotNull(createdTo.getDishes());
             dishTo.setId(createdTo.getDishes().get(i).getId());
         });
 
@@ -161,8 +163,10 @@ public class MenuControllerTest extends AbstractControllerTest {
         int newId = responseMenu.id();
         updatedMenu.setId(newId);
         updatedTo.setId(newId);
+        Assertions.assertNotNull(updatedTo.getDishes());
         IntStream.range(0, updatedTo.getDishes().size()).forEach(i -> {
             MenuTo.DishTo dishTo = updatedTo.getDishes().get(i);
+            Assertions.assertNotNull(responseMenuTo.getDishes());
             dishTo.setId(responseMenuTo.getDishes().get(i).getId());
         });
 

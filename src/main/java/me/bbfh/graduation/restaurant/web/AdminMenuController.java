@@ -52,7 +52,9 @@ public class AdminMenuController {
         log.info("create {}", menuTo);
         checkNew(menuTo);
 
+        assert menuTo.getRestaurantId() != null;
         Menu menu = menuRepository.save(MenuUtil.getModel(menuTo, restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
+        assert menuTo.getDishes() != null;
         List<Dish> dishes = menuTo.getDishes().stream()
                 .map(dishTo -> dishRepository.save(dishTo.toModel(menu)))
                 .toList();
