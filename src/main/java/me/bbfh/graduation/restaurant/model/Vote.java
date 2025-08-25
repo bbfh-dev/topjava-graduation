@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.bbfh.graduation.common.model.BaseEntity;
+import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.user.model.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -46,6 +47,6 @@ public class Vote extends BaseEntity {
     }
 
     public Vote(User user, Menu menu) {
-        this(null, LocalDate.now(), user, menu);
+        this(null, DateTimeUtil.getCurrentDate(), user, menu);
     }
 }

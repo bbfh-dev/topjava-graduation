@@ -1,6 +1,7 @@
 package me.bbfh.graduation.restaurant;
 
 import me.bbfh.graduation.MatcherFactory;
+import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.restaurant.model.Dish;
 import me.bbfh.graduation.restaurant.model.Menu;
 import me.bbfh.graduation.restaurant.to.MenuTo;
@@ -33,7 +34,7 @@ public class MenuTestData {
     public static List<Dish> DISHES = List.of(DISH_1, DISH_2, DISH_3);
 
     public static MenuTo getNewTo() {
-        return new MenuTo(null, LocalDate.now(), RESTAURANTS.getFirst().id(), getNewDishes());
+        return new MenuTo(null, DateTimeUtil.getCurrentDate(), RESTAURANTS.getFirst().id(), getNewDishes());
     }
 
     public static MenuTo getUpdatedTo() {

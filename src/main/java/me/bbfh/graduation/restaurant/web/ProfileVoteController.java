@@ -72,8 +72,7 @@ public class ProfileVoteController {
             throw new NotFoundException("Provided vote doesn't exist with id=" + voteId);
         }
 
-        LocalDate now = LocalDate.now();
-        Vote vote = voteRepository.save(new Vote(voteId, now, authUser.getUser(),
+        Vote vote = voteRepository.save(new Vote(voteId, DateTimeUtil.getCurrentDate(), authUser.getUser(),
                 menuRepository.getReferenceById(userVoteTo.getMenuId())));
         return VoteUtil.getTo(vote);
     }
