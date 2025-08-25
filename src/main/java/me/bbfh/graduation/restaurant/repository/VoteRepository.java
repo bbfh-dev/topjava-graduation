@@ -16,4 +16,5 @@ public interface VoteRepository extends BaseRepository<Vote> {
 
     @Query("SELECT e FROM #{#entityName} e WHERE e.user.id=:userId AND e.voteDate=:voteDate")
     Vote getToday(int userId, LocalDate voteDate);
+    Vote getByDate(int userId, LocalDate voteDate);
 }
