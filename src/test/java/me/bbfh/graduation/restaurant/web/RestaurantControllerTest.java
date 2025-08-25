@@ -1,12 +1,10 @@
 package me.bbfh.graduation.restaurant.web;
 
-import me.bbfh.graduation.AbstractControllerTest;
 import me.bbfh.graduation.common.util.JsonUtil;
 import me.bbfh.graduation.restaurant.RestaurantUtil;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.to.RestaurantTo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,7 +16,6 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static me.bbfh.graduation.restaurant.RestaurantTestData.*;
 import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
@@ -26,20 +23,13 @@ import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class RestaurantControllerTest extends AbstractControllerTest {
+public class RestaurantControllerTest extends AbstractRestaurantControllerTest {
 
     private static final String ADMIN_REST_URL_SLASH = AdminRestaurantController.REST_URL + '/';
     private static final String PROFILE_REST_URL_SLASH = ProfileRestaurantController.REST_URL + '/';
 
     @Autowired
     private RestaurantRepository repository;
-
-    @BeforeEach
-    public void repopulate() {
-        repository.deleteAll();
-        List<Restaurant> restaurants = repository.saveAll(RESTAURANTS);
-        IntStream.range(0, restaurants.size()).forEach(i -> RESTAURANTS.get(i).setId(restaurants.get(i).getId()));
-    }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
