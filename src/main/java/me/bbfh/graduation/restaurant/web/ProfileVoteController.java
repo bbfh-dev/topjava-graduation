@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -65,10 +64,11 @@ public class ProfileVoteController {
 
     @PutMapping("{voteId}")
     @Transactional
-    public VoteTo changeToday(@PathVariable int voteId, @Valid @RequestBody VoteTo.RestTo userVoteTo,
-                              @AuthenticationPrincipal AuthUser authUser) {
+    public VoteTo change(@PathVariable int voteId, @Valid @RequestBody VoteTo.RestTo userVoteTo,
+                         @AuthenticationPrincipal AuthUser authUser) {
         if (!DateTimeUtil.isVoteChangeAllowed()) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Not allowed to change vote after 11:00 local time");
+            throw new IllegalRequestDataException("Not allowed to change vote after "
+                    + DateTimeUtil.VOTE_TIME_LIMIT + " local time");
         }
 
         assert userVoteTo.getMenuId() != null;

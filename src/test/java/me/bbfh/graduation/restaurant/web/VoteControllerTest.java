@@ -133,4 +133,35 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
     }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void change() throws Exception {
+        DateTimeUtil.overrideCurrentDate(NEW_VOTE_DATE);
+        DateTimeUtil.overrideCurrentTime(DateTimeUtil.VOTE_TIME_LIMIT.minusMinutes(1));
+        ResultActions action = perform(MockMvcRequestBuilders.put(ProfileVoteController.REST_URL + "/" + VOTE_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(getUpdatedVote())))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
+        UPDATED_VOTE.setId(created.getId());
+        Assertions.assertEquals(created.getMenuId(), getUpdatedVote().getMenuId());
+        VOTE_TO_MATCHER.assertMatch(created, new VoteTo(UPDATED_VOTE));
+        VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.getId()), UPDATED_VOTE);
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void changePastTimeLimit() throws Exception {
+        DateTimeUtil.overrideCurrentDate(NEW_VOTE_DATE);
+        DateTimeUtil.overrideCurrentTime(DateTimeUtil.VOTE_TIME_LIMIT);
+        perform(MockMvcRequestBuilders.put(ProfileVoteController.REST_URL + "/" + VOTE_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(getUpdatedVote())))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn();
+    }
 }
