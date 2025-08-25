@@ -3,6 +3,7 @@ package me.bbfh.graduation.restaurant.web;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
+import me.bbfh.graduation.common.error.IllegalRequestDataException;
 import me.bbfh.graduation.common.error.NotFoundException;
 import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.restaurant.VoteUtil;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -46,10 +46,17 @@ public class ProfileVoteController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
     public VoteTo vote(@Valid @RequestBody VoteTo.RestTo userVoteTo, @AuthenticationPrincipal AuthUser authUser) {
         assert userVoteTo.getMenuId() != null;
         if (!menuRepository.existsById(userVoteTo.getMenuId())) {
             throw new NotFoundException("Provided menu doesn't exist with id=" + userVoteTo.getMenuId());
+        }
+
+        Vote existingVote = voteRepository.getByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
+        if (existingVote != null) {
+            throw new IllegalRequestDataException("Already casted a vote with id=" + existingVote.getId());
         }
 
         Vote vote = voteRepository.save(new Vote(authUser.getUser(), menuRepository.getReferenceById(userVoteTo.getMenuId())));
@@ -57,6 +64,7 @@ public class ProfileVoteController {
     }
 
     @PutMapping("{voteId}")
+    @Transactional
     public VoteTo changeToday(@PathVariable int voteId, @Valid @RequestBody VoteTo.RestTo userVoteTo,
                               @AuthenticationPrincipal AuthUser authUser) {
         if (!DateTimeUtil.isVoteChangeAllowed()) {
@@ -75,5 +83,19 @@ public class ProfileVoteController {
         Vote vote = voteRepository.save(new Vote(voteId, DateTimeUtil.getCurrentDate(), authUser.getUser(),
                 menuRepository.getReferenceById(userVoteTo.getMenuId())));
         return VoteUtil.getTo(vote);
+    }
+
+    @DeleteMapping("{voteId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
+    public void retract(@PathVariable int voteId, @AuthenticationPrincipal AuthUser authUser) {
+        voteRepository.deleteFromUser(authUser.getUser().getId(), voteId);
+    }
+
+    @DeleteMapping("today")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
+    public void retractToday(@AuthenticationPrincipal AuthUser authUser) {
+        voteRepository.deleteFromUserByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
     }
 }

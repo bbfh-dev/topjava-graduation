@@ -1,11 +1,14 @@
 package me.bbfh.graduation.restaurant.web;
 
+import me.bbfh.graduation.common.util.DateTimeUtil;
+import me.bbfh.graduation.common.util.JsonUtil;
 import me.bbfh.graduation.restaurant.model.Vote;
-import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.repository.VoteRepository;
 import me.bbfh.graduation.restaurant.to.VoteTo;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -15,14 +18,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static me.bbfh.graduation.restaurant.VoteTestData.*;
+import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
 import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class VoteControllerTest extends AbstractRestaurantControllerTest {
-
-    @Autowired
-    private MenuRepository menuRepository;
 
     @Autowired
     private VoteRepository voteRepository;
@@ -48,5 +49,88 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
             VOTE_TO_MATCHER.assertMatch(created, expectedTo);
             VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
         }
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getTodayUser() throws Exception {
+        DateTimeUtil.overrideCurrentDate(VOTE_DATE);
+        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileVoteController.REST_URL + "/today"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
+
+        Vote expected = VOTE_1;
+        VoteTo expectedTo = new VoteTo(expected);
+        VOTE_TO_MATCHER.assertMatch(created, expectedTo);
+        VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void getTodayAdmin() throws Exception {
+        DateTimeUtil.overrideCurrentDate(VOTE_DATE);
+        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileVoteController.REST_URL + "/today"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
+
+        Vote expected = VOTE_2;
+        VoteTo expectedTo = new VoteTo(expected);
+        VOTE_TO_MATCHER.assertMatch(created, expectedTo);
+        VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void retract() throws Exception {
+        perform(MockMvcRequestBuilders.delete(ProfileVoteController.REST_URL + "/" + VOTE_1.getId()))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        Assertions.assertFalse(voteRepository.existsById(VOTE_1.getId()));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void retractToday() throws Exception {
+        DateTimeUtil.overrideCurrentDate(VOTE_DATE);
+        perform(MockMvcRequestBuilders.delete(ProfileVoteController.REST_URL + "/today"))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        Assertions.assertFalse(voteRepository.existsById(VOTE_1.getId()));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void vote() throws Exception {
+        DateTimeUtil.overrideCurrentDate(NEW_VOTE_DATE);
+        ResultActions action = perform(MockMvcRequestBuilders.post(ProfileVoteController.REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(getNewVote())))
+                .andDo(print())
+                .andExpect(status().isCreated());
+
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
+        NEW_VOTE.setId(created.getId());
+        VOTE_TO_MATCHER.assertMatch(created, new VoteTo(NEW_VOTE));
+        VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.getId()), NEW_VOTE);
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void voteNotAllowed() throws Exception {
+        DateTimeUtil.overrideCurrentDate(VOTE_DATE);
+        perform(MockMvcRequestBuilders.post(ProfileVoteController.REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(getNewVote())))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn();
     }
 }
