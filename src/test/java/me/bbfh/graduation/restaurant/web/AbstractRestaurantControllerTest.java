@@ -1,6 +1,7 @@
 package me.bbfh.graduation.restaurant.web;
 
 import me.bbfh.graduation.AbstractControllerTest;
+import me.bbfh.graduation.common.model.BaseEntity;
 import me.bbfh.graduation.restaurant.model.Dish;
 import me.bbfh.graduation.restaurant.model.Menu;
 import me.bbfh.graduation.restaurant.model.Restaurant;
@@ -37,13 +38,13 @@ public abstract class AbstractRestaurantControllerTest extends AbstractControlle
 
     @BeforeEach
     public void repopulate() {
-        if (!restaurantRepository.existsById(RESTAURANT_1.id())) {
+        if (RESTAURANTS.stream().noneMatch(r -> restaurantRepository.existsById(r.id()))) {
             restaurantRepository.deleteAll();
             List<Restaurant> restaurants = restaurantRepository.saveAll(RESTAURANTS);
             IntStream.range(0, restaurants.size()).forEach(i -> RESTAURANTS.get(i).setId(restaurants.get(i).getId()));
         }
 
-        if (!menuRepository.existsById(MENU_1.id())) {
+        if (MENUS.stream().noneMatch(m -> menuRepository.existsById(m.id()))) {
             menuRepository.deleteAll();
             List<Menu> menus = menuRepository.saveAll(MENUS);
             IntStream.range(0, MENUS.size()).forEach(i -> {
@@ -52,7 +53,7 @@ public abstract class AbstractRestaurantControllerTest extends AbstractControlle
             });
         }
 
-        if (!dishRepository.existsById(DISH_1.id())) {
+        if (DISHES.stream().noneMatch(d -> dishRepository.existsById(d.id()))) {
             dishRepository.deleteAll();
             List<Dish> dishes = dishRepository.saveAll(DISHES);
             IntStream.range(0, DISHES.size()).forEach(j -> {
@@ -61,7 +62,7 @@ public abstract class AbstractRestaurantControllerTest extends AbstractControlle
             });
         }
 
-        if (!voteRepository.existsById(VOTE_1.id())) {
+        if (VOTES.stream().noneMatch(v -> voteRepository.existsById(v.id()))) {
             voteRepository.deleteAll();
             List<Vote> votes = voteRepository.saveAll(VOTES);
             IntStream.range(0, VOTES.size()).forEach(j -> {
