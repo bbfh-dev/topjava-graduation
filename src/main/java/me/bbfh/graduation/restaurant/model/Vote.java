@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "votes", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "vote_date"}, name = "vote_unique_user_voted_at_idx")
-}, indexes = {@Index(columnList = "restaurant_id, vote_date", name = "vote_restaurant_date_idx")})
+}, indexes = {@Index(columnList = "menu_id, vote_date", name = "vote_menu_date_idx")})
 public class Vote extends BaseEntity {
 
     @Column(name = "vote_date", nullable = false)
