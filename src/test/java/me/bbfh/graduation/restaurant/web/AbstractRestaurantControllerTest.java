@@ -47,6 +47,9 @@ public abstract class AbstractRestaurantControllerTest extends AbstractControlle
 
     @BeforeEach
     public void repopulate() {
+        // WARN: Unoptimized. Iterates over every single element before each test.
+        // But is kept just to ensure that tests don't fail for wrong reasons.
+        // Can be replaced with a proper integrity check.
         repopulateModelsIfMissing(RESTAURANTS, restaurantRepository);
         repopulateModelsIfMissing(MENUS, menuRepository);
         repopulateModelsIfMissing(DISHES, dishRepository);
