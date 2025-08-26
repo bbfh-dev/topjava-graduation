@@ -10,6 +10,7 @@ import me.bbfh.graduation.user.repository.UserRepository;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public abstract class AbstractUserController {
+
     protected final Logger log = getLogger(getClass());
 
     @Autowired

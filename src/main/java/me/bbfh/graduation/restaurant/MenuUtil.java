@@ -10,6 +10,7 @@ import java.util.List;
 
 @UtilityClass
 public class MenuUtil {
+
     public static List<MenuTo> getTosWithDishes(List<Menu> menus, DishRepository repository) {
         return menus.stream()
                 .map(menu -> getTo(menu, repository))

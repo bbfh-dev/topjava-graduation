@@ -9,6 +9,7 @@ import me.bbfh.graduation.common.validation.NoHtml;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class NamedTo extends BaseTo {
+
     @NotBlank
     @Size(min = 2, max = 64)
     @NoHtml

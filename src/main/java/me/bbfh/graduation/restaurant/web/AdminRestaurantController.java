@@ -24,6 +24,7 @@ import static me.bbfh.graduation.common.validation.ValidationUtil.checkNew;
 @Slf4j
 @Transactional(readOnly = true)
 public class AdminRestaurantController {
+
     static final String REST_URL = "/api/admin/restaurants";
 
     protected final RestaurantRepository repository;

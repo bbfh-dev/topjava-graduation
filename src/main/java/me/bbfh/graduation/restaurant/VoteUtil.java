@@ -8,6 +8,7 @@ import java.util.List;
 
 @UtilityClass
 public class VoteUtil {
+
     public static List<VoteTo> getTos(List<Vote> votes) {
         return votes.stream().map(VoteTo::new).toList();
     }

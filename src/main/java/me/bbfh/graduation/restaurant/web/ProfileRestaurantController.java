@@ -19,6 +19,7 @@ import java.util.List;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProfileRestaurantController {
+
     static final String REST_URL = "/api/profile/restaurants";
 
     protected final RestaurantRepository repository;

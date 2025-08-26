@@ -32,6 +32,7 @@ import static me.bbfh.graduation.common.validation.ValidationUtil.checkNew;
 @Slf4j
 @Transactional(readOnly = true)
 public class AdminMenuController {
+
     static final String REST_URL = "/api/admin/menus";
 
     protected final RestaurantRepository restaurantRepository;

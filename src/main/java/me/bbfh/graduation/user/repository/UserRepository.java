@@ -12,6 +12,7 @@ import static me.bbfh.graduation.app.config.SecurityConfig.PASSWORD_ENCODER;
 
 @Transactional(readOnly = true)
 public interface UserRepository extends BaseRepository<User> {
+
     @Query("SELECT u FROM User u WHERE u.email = LOWER(:email)")
     Optional<User> findByEmailIgnoreCase(String email);
 

@@ -9,6 +9,7 @@ import me.bbfh.graduation.restaurant.model.Restaurant;
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class RestaurantTo extends NamedTo implements HasId {
+
     public RestaurantTo(Integer id, String name) {
         super(id, name);
     }

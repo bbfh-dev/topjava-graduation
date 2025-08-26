@@ -12,6 +12,7 @@ import me.bbfh.graduation.common.validation.NoHtml;
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class UserTo extends NamedTo implements HasIdAndEmail {
+
     @Email
     @NotBlank
     @Size(max = 64)

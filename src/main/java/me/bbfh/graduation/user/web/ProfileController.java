@@ -24,6 +24,7 @@ import static me.bbfh.graduation.common.validation.ValidationUtil.checkNew;
 @Slf4j
 // TODO: cache only most requested data!
 public class ProfileController extends AbstractUserController {
+
     static final String REST_URL = "/api/profile";
 
     @GetMapping
