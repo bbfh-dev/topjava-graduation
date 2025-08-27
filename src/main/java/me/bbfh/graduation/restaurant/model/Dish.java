@@ -21,9 +21,8 @@ import java.math.BigDecimal;
 public class Dish extends NamedEntity {
 
     @NotNull
-    @Column(name = "price", nullable = false, precision = 7, scale = 2)
-    @Digits(integer = 9, fraction = 2)
-    private BigDecimal price;
+    @Column(name = "price", nullable = false)
+    private Long price;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,7 +30,7 @@ public class Dish extends NamedEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Menu menu;
 
-    public Dish(Integer id, String name, BigDecimal price, Menu menu) {
+    public Dish(Integer id, String name, Long price, Menu menu) {
         super(id, name);
         this.price = price;
         this.menu = menu;

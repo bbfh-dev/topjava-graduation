@@ -28,9 +28,9 @@ public class MenuTestData {
 
     private static final int DISH1_ID = 1;
 
-    public static final Dish DISH_1 = new Dish(DISH1_ID, "Example Dish #1 of Menu #1", BigDecimal.valueOf(10.5), MENU_1);
-    public static final Dish DISH_2 = new Dish(DISH1_ID + 1, "Example Dish #2 of Menu #1", BigDecimal.valueOf(6.0), MENU_1);
-    public static final Dish DISH_3 = new Dish(DISH1_ID + 2, "Example Dish #1 of Menu #2", BigDecimal.valueOf(16.0), MENU_2);
+    public static final Dish DISH_1 = new Dish(DISH1_ID, "Example Dish #1 of Menu #1", (long) 1050, MENU_1);
+    public static final Dish DISH_2 = new Dish(DISH1_ID + 1, "Example Dish #2 of Menu #1", (long) 600, MENU_1);
+    public static final Dish DISH_3 = new Dish(DISH1_ID + 2, "Example Dish #1 of Menu #2", (long) 1600, MENU_2);
 
     public static List<Dish> DISHES = List.of(DISH_1, DISH_2, DISH_3);
 
@@ -44,16 +44,16 @@ public class MenuTestData {
                 MENU_1.getRelevancyDate(),
                 MENU_1.getRestaurant().getId(),
                 List.of(
-                        new DishTo(DISH_1.getId(), "Updated Dish #1", BigDecimal.valueOf(10.5)),
-                        new DishTo(null, "New Dish", BigDecimal.valueOf(8.35))
+                        new DishTo(DISH_1.getId(), "Updated Dish #1", (long) 1050),
+                        new DishTo(null, "New Dish", (long) 835)
                 )
         );
     }
 
     public static List<DishTo> getNewDishes() {
         return List.of(
-                new DishTo(null, "Example Dish #A", BigDecimal.valueOf(12.0f)),
-                new DishTo(null, "Example Dish #B", BigDecimal.valueOf(50.0f))
+                new DishTo(null, "Example Dish #A", (long) 1200),
+                new DishTo(null, "Example Dish #B", (long) 5000)
         );
     }
 }
