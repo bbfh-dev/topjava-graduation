@@ -4,7 +4,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
 import me.bbfh.graduation.common.error.IllegalRequestDataException;
-import me.bbfh.graduation.restaurant.MenuUtil;
+import me.bbfh.graduation.restaurant.mapper.DishMapper;
+import me.bbfh.graduation.restaurant.mapper.MenuMapper;
 import me.bbfh.graduation.restaurant.model.Dish;
 import me.bbfh.graduation.restaurant.model.Menu;
 import me.bbfh.graduation.restaurant.repository.DishRepository;
@@ -56,16 +57,17 @@ public class AdminMenuController {
         checkNew(menuTo);
 
         assert menuTo.getRestaurantId() != null;
-        Menu menu = menuRepository.save(MenuUtil.getModel(menuTo, restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
+        Menu menu = menuRepository.save(MenuMapper.toEntity(menuTo, restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
         assert menuTo.getDishes() != null;
         List<Dish> dishes = menuTo.getDishes().stream()
-                .map(dishTo -> dishRepository.save(dishTo.toModel(menu)))
+                .map(dishTo -> dishRepository.save(DishMapper.toEntity(dishTo, menu)))
                 .toList();
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath().path(REST_URL).build().toUri();
-        return ResponseEntity.created(uriOfNewResource).body(new MenuTo(menu, dishes.stream()
-                .map(MenuTo.DishTo::new)
-                .toList()));
+        return ResponseEntity.created(uriOfNewResource)
+                .body(MenuMapper.toTo(menu, dishes.stream()
+                        .map(DishMapper::toTo)
+                        .toList()));
     }
 
     @PutMapping(value = "/{menuId}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +81,7 @@ public class AdminMenuController {
         }
 
         assert menuTo.getRestaurantId() != null;
-        Menu menu = menuRepository.save(MenuUtil.getModel(menuTo,
+        Menu menu = menuRepository.save(MenuMapper.toEntity(menuTo,
                 restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
         Map<Integer, Dish> databaseDishes =
                 dishRepository.getAll(menu.getId()).stream()
@@ -88,14 +90,14 @@ public class AdminMenuController {
         assert menuTo.getDishes() != null;
         List<Dish> dishes = menuTo.getDishes().stream().map(dishTo -> {
             databaseDishes.remove(dishTo.getId());
-            return dishRepository.save(dishTo.toModel(menu));
+            return dishRepository.save(DishMapper.toEntity(dishTo, menu));
         }).toList();
 
         // Delete dishes that are no longer referenced
         databaseDishes.forEach((id, dish) -> dishRepository.delete(dish));
 
-        return new MenuTo(menu, dishes.stream()
-                .map(MenuTo.DishTo::new)
+        return MenuMapper.toTo(menu, dishes.stream()
+                .map(DishMapper::toTo)
                 .toList());
     }
 

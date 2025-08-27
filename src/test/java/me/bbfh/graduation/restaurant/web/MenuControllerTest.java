@@ -2,11 +2,13 @@ package me.bbfh.graduation.restaurant.web;
 
 import me.bbfh.graduation.common.util.JsonUtil;
 import me.bbfh.graduation.restaurant.MenuUtil;
+import me.bbfh.graduation.restaurant.mapper.MenuMapper;
 import me.bbfh.graduation.restaurant.model.Menu;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.DishRepository;
 import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
+import me.bbfh.graduation.restaurant.to.DishTo;
 import me.bbfh.graduation.restaurant.to.MenuTo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -91,7 +93,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         MenuTo newTo = getNewTo();
         Assertions.assertNotNull(newTo.getRestaurantId());
         Restaurant restaurantRef = restaurantRepository.getReferenceById(newTo.getRestaurantId());
-        Menu newMenu = MenuUtil.getModel(newTo, restaurantRef);
+        Menu newMenu = MenuMapper.toEntity(newTo, restaurantRef);
 
         ResultActions action = perform(MockMvcRequestBuilders.post(AdminMenuController.REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -100,13 +102,13 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
                 .andExpect(status().isCreated());
 
         MenuTo createdTo = MENU_TO_MATCHER.readFromJson(action);
-        Menu created = MenuUtil.getModel(createdTo, restaurantRef);
+        Menu created = MenuMapper.toEntity(createdTo, restaurantRef);
         int newId = created.id();
         newMenu.setId(newId);
         newTo.setId(newId);
         Assertions.assertNotNull(newTo.getDishes());
         IntStream.range(0, newTo.getDishes().size()).forEach(i -> {
-            MenuTo.DishTo dishTo = newTo.getDishes().get(i);
+            DishTo dishTo = newTo.getDishes().get(i);
             Assertions.assertNotNull(createdTo.getDishes());
             dishTo.setId(createdTo.getDishes().get(i).getId());
         });
@@ -122,7 +124,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         MenuTo updatedTo = getUpdatedTo();
         Assertions.assertNotNull(updatedTo.getRestaurantId());
         Restaurant restaurantRef = restaurantRepository.getReferenceById(updatedTo.getRestaurantId());
-        Menu updatedMenu = MenuUtil.getModel(updatedTo, restaurantRef);
+        Menu updatedMenu = MenuMapper.toEntity(updatedTo, restaurantRef);
 
         ResultActions action = perform(MockMvcRequestBuilders.put(AdminMenuController.REST_URL + "/" + MENU_1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -131,13 +133,13 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
                 .andExpect(status().isOk());
 
         MenuTo responseMenuTo = MENU_TO_MATCHER.readFromJson(action);
-        Menu responseMenu = MenuUtil.getModel(responseMenuTo, restaurantRef);
+        Menu responseMenu = MenuMapper.toEntity(responseMenuTo, restaurantRef);
         int newId = responseMenu.id();
         updatedMenu.setId(newId);
         updatedTo.setId(newId);
         Assertions.assertNotNull(updatedTo.getDishes());
         IntStream.range(0, updatedTo.getDishes().size()).forEach(i -> {
-            MenuTo.DishTo dishTo = updatedTo.getDishes().get(i);
+            DishTo dishTo = updatedTo.getDishes().get(i);
             Assertions.assertNotNull(responseMenuTo.getDishes());
             dishTo.setId(responseMenuTo.getDishes().get(i).getId());
         });

@@ -1,9 +1,12 @@
 package me.bbfh.graduation.restaurant;
 
 import lombok.experimental.UtilityClass;
+import me.bbfh.graduation.restaurant.mapper.DishMapper;
+import me.bbfh.graduation.restaurant.mapper.MenuMapper;
 import me.bbfh.graduation.restaurant.model.Menu;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.DishRepository;
+import me.bbfh.graduation.restaurant.to.DishTo;
 import me.bbfh.graduation.restaurant.to.MenuTo;
 
 import java.util.List;
@@ -18,14 +21,8 @@ public class MenuUtil {
     }
 
     public static MenuTo getTo(Menu menu, DishRepository repository) {
-        return new MenuTo(menu,
-                repository.getAll(menu.getId()).stream()
-                        .map(MenuTo.DishTo::new)
-                        .toList()
-        );
-    }
-
-    public static Menu getModel(MenuTo menuTo, Restaurant restaurant) {
-        return new Menu(menuTo.getId(), menuTo.getRelevancyDate(), restaurant);
+        return MenuMapper.toTo(menu, repository.getAll(menu.getId()).stream()
+                .map(DishMapper::toTo)
+                .toList());
     }
 }

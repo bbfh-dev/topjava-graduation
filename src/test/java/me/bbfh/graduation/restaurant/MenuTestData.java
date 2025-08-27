@@ -4,6 +4,7 @@ import me.bbfh.graduation.MatcherFactory;
 import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.restaurant.model.Dish;
 import me.bbfh.graduation.restaurant.model.Menu;
+import me.bbfh.graduation.restaurant.to.DishTo;
 import me.bbfh.graduation.restaurant.to.MenuTo;
 
 import java.math.BigDecimal;
@@ -43,16 +44,16 @@ public class MenuTestData {
                 MENU_1.getRelevancyDate(),
                 MENU_1.getRestaurant().getId(),
                 List.of(
-                        new MenuTo.DishTo(DISH_1.getId(), "Updated Dish #1", BigDecimal.valueOf(10.5)),
-                        new MenuTo.DishTo(null, "New Dish", BigDecimal.valueOf(8.35))
+                        new DishTo(DISH_1.getId(), "Updated Dish #1", BigDecimal.valueOf(10.5)),
+                        new DishTo(null, "New Dish", BigDecimal.valueOf(8.35))
                 )
         );
     }
 
-    public static List<MenuTo.DishTo> getNewDishes() {
+    public static List<DishTo> getNewDishes() {
         return List.of(
-                new MenuTo.DishTo(null, "Example Dish #A", BigDecimal.valueOf(12.0f)),
-                new MenuTo.DishTo(null, "Example Dish #B", BigDecimal.valueOf(50.0f))
+                new DishTo(null, "Example Dish #A", BigDecimal.valueOf(12.0f)),
+                new DishTo(null, "Example Dish #B", BigDecimal.valueOf(50.0f))
         );
     }
 }
