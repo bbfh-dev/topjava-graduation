@@ -57,9 +57,9 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
             if (expected == null) {
                 throw new IllegalStateException("There must be no extra restaurants");
             }
-            MenuTo expectedTo = MenuUtil.getTo(expected, dishRepository);
+            MenuTo expectedTo = MenuUtil.getToFetchDishes(expected, dishRepository);
             MENU_TO_MATCHER.assertMatch(created, expectedTo);
-            MENU_TO_MATCHER.assertMatch(MenuUtil.getTo(menuRepository.getExisted(created.id()), dishRepository), expectedTo);
+            MENU_TO_MATCHER.assertMatch(MenuUtil.getToFetchDishes(menuRepository.getExisted(created.id()), dishRepository), expectedTo);
         }
     }
 
@@ -80,11 +80,11 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
                 .andExpect(status().isOk());
 
         MenuTo created = MENU_TO_MATCHER.readFromJson(action);
-        MenuTo expected = MenuUtil.getTo(MENU_1, dishRepository);
+        MenuTo expected = MenuUtil.getToFetchDishes(MENU_1, dishRepository);
         expected.setId(created.getId());
 
         MENU_TO_MATCHER.assertMatch(created, expected);
-        MENU_TO_MATCHER.assertMatch(MenuUtil.getTo(menuRepository.getExisted(created.id()), dishRepository), expected);
+        MENU_TO_MATCHER.assertMatch(MenuUtil.getToFetchDishes(menuRepository.getExisted(created.id()), dishRepository), expected);
     }
 
     @Test

@@ -33,12 +33,12 @@ public class ProfileMenuController {
 
     @GetMapping
     public List<MenuTo> getAll() {
-        return MenuUtil.getTosWithDishes(menuRepository.findAll(), dishRepository);
+        return MenuUtil.getTosFetchDishes(menuRepository.findAll(), dishRepository);
     }
 
     @GetMapping("/{menuId}")
     public MenuTo get(@PathVariable int menuId) {
         log.info("get id={}", menuId);
-        return MenuUtil.getTo(menuRepository.getExisted(menuId), dishRepository);
+        return MenuUtil.getToFetchDishes(menuRepository.getExisted(menuId), dishRepository);
     }
 }
