@@ -3,7 +3,8 @@ package me.bbfh.graduation.restaurant.web;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
-import me.bbfh.graduation.restaurant.RestaurantUtil;
+import me.bbfh.graduation.common.validation.ValidationUtil;
+import me.bbfh.graduation.restaurant.mapper.RestaurantMapper;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.to.RestaurantTo;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+import static me.bbfh.graduation.common.validation.ValidationUtil.assureIdConsistent;
 import static me.bbfh.graduation.common.validation.ValidationUtil.checkNew;
 
 @RestController
@@ -39,7 +41,7 @@ public class AdminRestaurantController {
     public ResponseEntity<Restaurant> create(@Valid @RequestBody RestaurantTo restaurantTo) {
         log.info("create {}", restaurantTo);
         checkNew(restaurantTo);
-        Restaurant created = repository.save(RestaurantUtil.createNewFromTo(restaurantTo));
+        Restaurant created = repository.save(RestaurantMapper.toEntity(restaurantTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath().path(REST_URL).build().toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
@@ -51,8 +53,8 @@ public class AdminRestaurantController {
                                              @RequestBody @Valid RestaurantTo restaurantTo,
                                              @AuthenticationPrincipal AuthUser authUser) {
         log.info("update {} by {}", restaurantTo, authUser);
-        RestaurantUtil.assureIsNotNew(restaurantTo);
-        Restaurant restaurant = RestaurantUtil.createNewFromTo(restaurantTo);
+        assureIdConsistent(restaurantTo, restaurantId);
+        Restaurant restaurant = RestaurantMapper.toEntity(restaurantTo);
         restaurant.setId(restaurantId);
         Restaurant created = repository.save(restaurant);
         return ResponseEntity.ok().body(created);

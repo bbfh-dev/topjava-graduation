@@ -1,7 +1,7 @@
 package me.bbfh.graduation.restaurant.web;
 
 import me.bbfh.graduation.common.util.JsonUtil;
-import me.bbfh.graduation.restaurant.RestaurantUtil;
+import me.bbfh.graduation.restaurant.mapper.RestaurantMapper;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.to.RestaurantTo;
@@ -87,7 +87,7 @@ public class RestaurantControllerTest extends AbstractRestaurantControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void create() throws Exception {
         RestaurantTo newTo = new RestaurantTo(null, RESTAURANT_NEW.getName());
-        Restaurant newRestaurant = RestaurantUtil.createNewFromTo(newTo);
+        Restaurant newRestaurant = RestaurantMapper.toEntity(newTo);
         ResultActions action = perform(MockMvcRequestBuilders.post(AdminRestaurantController.REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTo)))
