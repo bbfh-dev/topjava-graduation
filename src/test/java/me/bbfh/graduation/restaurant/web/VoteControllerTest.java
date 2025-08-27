@@ -2,6 +2,7 @@ package me.bbfh.graduation.restaurant.web;
 
 import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.common.util.JsonUtil;
+import me.bbfh.graduation.restaurant.mapper.VoteMapper;
 import me.bbfh.graduation.restaurant.model.Vote;
 import me.bbfh.graduation.restaurant.repository.VoteRepository;
 import me.bbfh.graduation.restaurant.to.VoteTo;
@@ -45,7 +46,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
             if (expected == null) {
                 throw new IllegalStateException("There must be no extra restaurants");
             }
-            VoteTo expectedTo = new VoteTo(expected);
+            VoteTo expectedTo = VoteMapper.toTo(expected);
             VOTE_TO_MATCHER.assertMatch(created, expectedTo);
             VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
         }
@@ -62,7 +63,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
         VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
 
         Vote expected = VOTE_1;
-        VoteTo expectedTo = new VoteTo(expected);
+        VoteTo expectedTo = VoteMapper.toTo(expected);
         VOTE_TO_MATCHER.assertMatch(created, expectedTo);
         VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
     }
@@ -78,7 +79,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
         VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
 
         Vote expected = VOTE_2;
-        VoteTo expectedTo = new VoteTo(expected);
+        VoteTo expectedTo = VoteMapper.toTo(expected);
         VOTE_TO_MATCHER.assertMatch(created, expectedTo);
         VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
     }
@@ -118,7 +119,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
 
         VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
         NEW_VOTE.setId(created.getId());
-        VOTE_TO_MATCHER.assertMatch(created, new VoteTo(NEW_VOTE));
+        VOTE_TO_MATCHER.assertMatch(created, VoteMapper.toTo(NEW_VOTE));
         VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.getId()), NEW_VOTE);
     }
 
@@ -148,7 +149,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
         VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
         UPDATED_VOTE.setId(created.getId());
         Assertions.assertEquals(created.getMenuId(), getUpdatedVote().getMenuId());
-        VOTE_TO_MATCHER.assertMatch(created, new VoteTo(UPDATED_VOTE));
+        VOTE_TO_MATCHER.assertMatch(created, VoteMapper.toTo(UPDATED_VOTE));
         VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.getId()), UPDATED_VOTE);
     }
 

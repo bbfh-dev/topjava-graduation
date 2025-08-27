@@ -6,7 +6,7 @@ import me.bbfh.graduation.app.AuthUser;
 import me.bbfh.graduation.common.error.IllegalRequestDataException;
 import me.bbfh.graduation.common.error.NotFoundException;
 import me.bbfh.graduation.common.util.DateTimeUtil;
-import me.bbfh.graduation.restaurant.VoteUtil;
+import me.bbfh.graduation.restaurant.mapper.VoteMapper;
 import me.bbfh.graduation.restaurant.model.Vote;
 import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.repository.VoteRepository;
@@ -37,12 +37,12 @@ public class ProfileVoteController {
 
     @GetMapping("history")
     public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
-        return VoteUtil.getTos(voteRepository.getAll(authUser.getUser().getId()));
+        return VoteMapper.toTos(voteRepository.getAll(authUser.getUser().getId()));
     }
 
     @GetMapping("today")
     public VoteTo getToday(@AuthenticationPrincipal AuthUser authUser) {
-        return VoteUtil.getTo(voteRepository.getByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate()));
+        return VoteMapper.toTo(voteRepository.getByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate()));
     }
 
     @PostMapping
@@ -60,7 +60,7 @@ public class ProfileVoteController {
         }
 
         Vote vote = voteRepository.save(new Vote(authUser.getUser(), menuRepository.getReferenceById(userVoteTo.getMenuId())));
-        return VoteUtil.getTo(vote);
+        return VoteMapper.toTo(vote);
     }
 
     @PutMapping("{voteId}")
@@ -83,7 +83,7 @@ public class ProfileVoteController {
 
         Vote vote = voteRepository.save(new Vote(voteId, DateTimeUtil.getCurrentDate(), authUser.getUser(),
                 menuRepository.getReferenceById(userVoteTo.getMenuId())));
-        return VoteUtil.getTo(vote);
+        return VoteMapper.toTo(vote);
     }
 
     @DeleteMapping("{voteId}")

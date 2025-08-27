@@ -25,10 +25,6 @@ public class VoteTo extends BaseTo implements HasId {
         this.voteDate = voteDate;
     }
 
-    public VoteTo(Vote vote) {
-        this(vote.getId(), vote.getMenu().getId(), vote.getVoteDate());
-    }
-
     @Value
     @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
     @AllArgsConstructor
