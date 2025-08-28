@@ -7,6 +7,7 @@ import me.bbfh.graduation.common.error.IllegalRequestDataException;
 import me.bbfh.graduation.common.error.NotFoundException;
 import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.restaurant.mapper.VoteMapper;
+import me.bbfh.graduation.restaurant.model.Menu;
 import me.bbfh.graduation.restaurant.model.Vote;
 import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.repository.VoteRepository;
@@ -49,9 +50,13 @@ public class ProfileVoteController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public VoteTo vote(@Valid @RequestBody VoteTo.RestTo userVoteTo, @AuthenticationPrincipal AuthUser authUser) {
-        assert userVoteTo.getMenuId() != null;
-        if (!menuRepository.existsById(userVoteTo.getMenuId())) {
+        Menu menu = menuRepository.getExisted(userVoteTo.getMenuId());
+        if (menu == null) {
             throw new NotFoundException("Provided menu doesn't exist with id=" + userVoteTo.getMenuId());
+        }
+
+        if (!menu.getRelevancyDate().isEqual(DateTimeUtil.getCurrentDate())) {
+            throw new IllegalRequestDataException("Can't vote for an irrelevant Menu. Vote for a menu that is relevant today.");
         }
 
         Vote existingVote = voteRepository.getByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
@@ -59,7 +64,7 @@ public class ProfileVoteController {
             throw new IllegalRequestDataException("Already casted a vote with id=" + existingVote.getId());
         }
 
-        Vote vote = voteRepository.save(new Vote(authUser.getUser(), menuRepository.getReferenceById(userVoteTo.getMenuId())));
+        Vote vote = voteRepository.save(new Vote(authUser.getUser(), menu));
         return VoteMapper.toTo(vote);
     }
 
