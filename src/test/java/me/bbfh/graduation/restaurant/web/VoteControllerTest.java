@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static me.bbfh.graduation.restaurant.VoteTestData.*;
-import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
 import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
