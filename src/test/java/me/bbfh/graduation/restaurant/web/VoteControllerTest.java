@@ -32,7 +32,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void history() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileVoteController.REST_URL + "/history"))
+        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileVoteController.REST_URL))
                 .andDo(print())
                 .andExpect(status().isOk());
 

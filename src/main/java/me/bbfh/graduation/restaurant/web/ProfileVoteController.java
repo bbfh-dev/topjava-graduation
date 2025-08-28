@@ -35,7 +35,7 @@ public class ProfileVoteController {
         this.menuRepository = menuRepository;
     }
 
-    @GetMapping("history")
+    @GetMapping
     public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
         return VoteMapper.toTos(voteRepository.getAll(authUser.getUser().getId()));
     }
