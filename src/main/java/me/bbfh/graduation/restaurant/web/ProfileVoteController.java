@@ -41,8 +41,8 @@ public class ProfileVoteController {
     }
 
     @GetMapping("today")
-    public VoteTo getToday(@AuthenticationPrincipal AuthUser authUser) {
-        return VoteMapper.toTo(voteRepository.getByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate()));
+    public List<VoteTo> getToday() {
+        return VoteMapper.toTos(voteRepository.getByDate(DateTimeUtil.getCurrentDate()));
     }
 
     @PostMapping
