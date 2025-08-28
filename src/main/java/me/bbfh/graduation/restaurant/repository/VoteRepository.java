@@ -18,6 +18,9 @@ public interface VoteRepository extends BaseRepository<Vote> {
     @Query("SELECT e FROM #{#entityName} e WHERE e.user.id=:userId AND e.voteDate=:voteDate")
     Vote getByDate(int userId, LocalDate voteDate);
 
+    @Query("SELECT e FROM #{#entityName} e WHERE e.voteDate=:voteDate")
+    List<Vote> getByDate(LocalDate voteDate);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM #{#entityName} e WHERE e.user.id=:userId AND e.id=:voteId")
