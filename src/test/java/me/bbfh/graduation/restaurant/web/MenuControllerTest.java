@@ -75,12 +75,12 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void get() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileMenuController.REST_URL + "/" + MENU_1.getId()))
+        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileMenuController.REST_URL + "/" + MENUS.getFirst().getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         MenuTo created = MENU_TO_MATCHER.readFromJson(action);
-        MenuTo expected = MenuUtil.getToFetchDishes(MENU_1, dishRepository);
+        MenuTo expected = MenuUtil.getToFetchDishes(MENUS.getFirst(), dishRepository);
         expected.setId(created.getId());
 
         MENU_TO_MATCHER.assertMatch(created, expected);
@@ -126,7 +126,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         Restaurant restaurantRef = restaurantRepository.getReferenceById(updatedTo.getRestaurantId());
         Menu updatedMenu = MenuMapper.toEntity(updatedTo, restaurantRef);
 
-        ResultActions action = perform(MockMvcRequestBuilders.put(AdminMenuController.REST_URL + "/" + MENU_1.getId())
+        ResultActions action = perform(MockMvcRequestBuilders.put(AdminMenuController.REST_URL + "/" + MENUS.getFirst().getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
@@ -147,7 +147,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         MENU_TO_MATCHER.assertMatch(responseMenuTo, updatedTo);
         MENU_MATCHER.assertMatch(responseMenu, updatedMenu);
         MENU_MATCHER.assertMatch(menuRepository.getExisted(newId), updatedMenu);
-        Assertions.assertNull(dishRepository.findById(DISH_2.getId()).orElse(null));
+        Assertions.assertNull(dishRepository.findById(DISHES.get(1).getId()).orElse(null));
     }
 
     @Test
@@ -166,13 +166,13 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(AdminMenuController.REST_URL + "/" + MENU_2.getId()))
+        perform(MockMvcRequestBuilders.delete(AdminMenuController.REST_URL + "/" + MENUS.get(1).getId()))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andReturn();
 
-        Assertions.assertFalse(menuRepository.existsById(MENU_2.getId()));
-        Assertions.assertFalse(dishRepository.existsById(DISH_3.getId()));
+        Assertions.assertFalse(menuRepository.existsById(MENUS.get(1).getId()));
+        Assertions.assertFalse(dishRepository.existsById(DISHES.get(2).getId()));
     }
 
     @Test

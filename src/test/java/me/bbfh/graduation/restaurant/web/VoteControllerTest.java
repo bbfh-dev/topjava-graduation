@@ -54,45 +54,32 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void getTodayUser() throws Exception {
+    void getToday() throws Exception {
         DateTimeUtil.overrideCurrentDate(VOTE_DATE);
         ResultActions action = perform(MockMvcRequestBuilders.get(ProfileVoteController.REST_URL + "/today"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
+        List<VoteTo> createdList = VOTE_TO_MATCHER.readListFromJson(action);
 
-        Vote expected = VOTE_1;
-        VoteTo expectedTo = VoteMapper.toTo(expected);
-        VOTE_TO_MATCHER.assertMatch(created, expectedTo);
-        VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
-    void getTodayAdmin() throws Exception {
-        DateTimeUtil.overrideCurrentDate(VOTE_DATE);
-        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileVoteController.REST_URL + "/today"))
-                .andDo(print())
-                .andExpect(status().isOk());
-
-        VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
-
-        Vote expected = VOTE_2;
-        VoteTo expectedTo = VoteMapper.toTo(expected);
-        VOTE_TO_MATCHER.assertMatch(created, expectedTo);
-        VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
+        for (int i = 0; i < createdList.size(); i++) {
+            VoteTo created = createdList.get(i);
+            Vote expected = VOTES.get(i);
+            VoteTo expectedTo = VoteMapper.toTo(expected);
+            VOTE_TO_MATCHER.assertMatch(created, expectedTo);
+            VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
+        }
     }
 
     @Test
     @WithUserDetails(value = USER_MAIL)
     void retract() throws Exception {
-        perform(MockMvcRequestBuilders.delete(ProfileVoteController.REST_URL + "/" + VOTE_1.getId()))
+        perform(MockMvcRequestBuilders.delete(ProfileVoteController.REST_URL + "/" + VOTES.getFirst().getId()))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andReturn();
 
-        Assertions.assertFalse(voteRepository.existsById(VOTE_1.getId()));
+        Assertions.assertFalse(voteRepository.existsById(VOTES.getFirst().getId()));
     }
 
     @Test
@@ -104,7 +91,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
                 .andExpect(status().isNoContent())
                 .andReturn();
 
-        Assertions.assertFalse(voteRepository.existsById(VOTE_1.getId()));
+        Assertions.assertFalse(voteRepository.existsById(VOTES.getFirst().getId()));
     }
 
     @Test
@@ -140,7 +127,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
     void change() throws Exception {
         DateTimeUtil.overrideCurrentDate(NEW_VOTE_DATE);
         DateTimeUtil.overrideCurrentTime(DateTimeUtil.VOTE_TIME_LIMIT.minusMinutes(1));
-        ResultActions action = perform(MockMvcRequestBuilders.put(ProfileVoteController.REST_URL + "/" + VOTE_1.getId())
+        ResultActions action = perform(MockMvcRequestBuilders.put(ProfileVoteController.REST_URL + "/" + VOTES.getFirst().getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getUpdatedVote())))
                 .andDo(print())
@@ -158,7 +145,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
     void changePastTimeLimit() throws Exception {
         DateTimeUtil.overrideCurrentDate(NEW_VOTE_DATE);
         DateTimeUtil.overrideCurrentTime(DateTimeUtil.VOTE_TIME_LIMIT);
-        perform(MockMvcRequestBuilders.put(ProfileVoteController.REST_URL + "/" + VOTE_1.getId())
+        perform(MockMvcRequestBuilders.put(ProfileVoteController.REST_URL + "/" + VOTES.getFirst().getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getUpdatedVote())))
                 .andDo(print())

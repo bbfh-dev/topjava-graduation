@@ -19,6 +19,8 @@ public class GraduationApplication {
     private final MenuRepository menuRepository;
     private final DishRepository dishRepository;
 
+    public static boolean doPopulateWithDemoData = true;
+
     public GraduationApplication(RestaurantRepository restaurantRepository, MenuRepository menuRepository,
                                  DishRepository dishRepository) {
         this.restaurantRepository = restaurantRepository;
@@ -32,6 +34,10 @@ public class GraduationApplication {
 
     @EventListener(ApplicationReadyEvent.class)
     public void populateDatabase() {
+        if (!doPopulateWithDemoData) {
+            return;
+        }
+
         Restaurant restaurantA = restaurantRepository.save(new Restaurant(null, "My Restaurant A"));
         Restaurant restaurantB = restaurantRepository.save(new Restaurant(null, "My Restaurant B"));
 

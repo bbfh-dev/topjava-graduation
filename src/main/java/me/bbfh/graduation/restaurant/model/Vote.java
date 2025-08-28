@@ -2,10 +2,7 @@ package me.bbfh.graduation.restaurant.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import me.bbfh.graduation.common.model.BaseEntity;
 import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.user.model.User;
@@ -19,6 +16,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(callSuper = true)
 @Table(name = "vote", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "vote_date"}, name = "vote_unique_user_voted_at_idx")
 }, indexes = {@Index(columnList = "menu_id, vote_date", name = "vote_menu_date_idx")})

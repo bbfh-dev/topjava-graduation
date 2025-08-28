@@ -1,12 +1,14 @@
 package me.bbfh.graduation.restaurant.web;
 
 import me.bbfh.graduation.AbstractControllerTest;
+import me.bbfh.graduation.GraduationApplication;
 import me.bbfh.graduation.common.BaseRepository;
 import me.bbfh.graduation.common.model.BaseEntity;
 import me.bbfh.graduation.restaurant.repository.DishRepository;
 import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
 import me.bbfh.graduation.restaurant.repository.VoteRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,6 +45,11 @@ public abstract class AbstractRestaurantControllerTest extends AbstractControlle
             T item = items.get(i);
             item.setId(dbItems.get(i).getId());
         });
+    }
+
+    @BeforeAll
+    public static void disablePrepopulation() {
+        GraduationApplication.doPopulateWithDemoData = false;
     }
 
     @BeforeEach

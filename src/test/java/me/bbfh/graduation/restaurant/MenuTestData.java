@@ -21,21 +21,21 @@ public class MenuTestData {
 
     public static final int MENU_NOT_EXIST_ID = MENU1_ID + 100_000;
 
-    public static final Menu MENU_1 = new Menu(MENU1_ID, LocalDate.of(2024, 1, 12), RestaurantTestData.RESTAURANT_1);
-    public static final Menu MENU_2 = new Menu(MENU1_ID + 1, LocalDate.of(2024, 1, 13), RestaurantTestData.RESTAURANT_1);
+    private static final Menu MENU_1 = new Menu(MENU1_ID, LocalDate.now().minusDays(1), RestaurantTestData.RESTAURANT_1);
+    private static final Menu MENU_2 = new Menu(MENU1_ID + 1, LocalDate.now(), RestaurantTestData.RESTAURANT_1);
 
     public static List<Menu> MENUS = List.of(MENU_1, MENU_2);
 
     private static final int DISH1_ID = 1;
 
-    public static final Dish DISH_1 = new Dish(DISH1_ID, "Example Dish #1 of Menu #1", (long) 1050, MENU_1);
-    public static final Dish DISH_2 = new Dish(DISH1_ID + 1, "Example Dish #2 of Menu #1", (long) 600, MENU_1);
-    public static final Dish DISH_3 = new Dish(DISH1_ID + 2, "Example Dish #1 of Menu #2", (long) 1600, MENU_2);
+    private static final Dish DISH_1 = new Dish(DISH1_ID, "Example Dish #1 of Menu #1", (long) 1050, MENU_1);
+    private static final Dish DISH_2 = new Dish(DISH1_ID + 1, "Example Dish #2 of Menu #1", (long) 600, MENU_1);
+    private static final Dish DISH_3 = new Dish(DISH1_ID + 2, "Example Dish #1 of Menu #2", (long) 1600, MENU_2);
 
     public static List<Dish> DISHES = List.of(DISH_1, DISH_2, DISH_3);
 
     public static MenuTo getNewTo() {
-        return new MenuTo(null, DateTimeUtil.getCurrentDate(), RESTAURANTS.getFirst().id(), getNewDishes());
+        return new MenuTo(null, LocalDate.now(), RESTAURANTS.get(1).id(), getNewDishes());
     }
 
     public static MenuTo getUpdatedTo() {

@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@ToString(callSuper = true)
 @Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "relevancy_date"}, name = "menu_unique_restaurant_date_idx")})
 public class Menu extends BaseEntity {
 

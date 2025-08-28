@@ -2,10 +2,7 @@ package me.bbfh.graduation.restaurant.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import me.bbfh.graduation.common.HasId;
 import me.bbfh.graduation.common.model.NamedEntity;
 
@@ -13,6 +10,7 @@ import me.bbfh.graduation.common.model.NamedEntity;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(callSuper = true)
 @Table(name = "restaurant")
 public class Restaurant extends NamedEntity implements HasId {
 
