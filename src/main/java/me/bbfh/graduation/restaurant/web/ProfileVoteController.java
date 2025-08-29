@@ -84,9 +84,11 @@ public class ProfileVoteController {
         }
 
         assert userVoteTo.getMenuId() != null;
-        Menu menu = menuRepository.findById(userVoteTo.getMenuId()).orElseThrow();
+        Menu menu = menuRepository.findById(userVoteTo.getMenuId())
+                .orElseThrow(() -> new NotFoundException("Provided menu doesn't exist with id=" + userVoteTo.getMenuId()));
 
-        Vote vote = voteRepository.findById(voteId).orElseThrow();
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(() -> new NotFoundException("vote not found with id=" + voteId));
         if (!vote.getUser().equals(authUser.getUser())) {
             throw new ForbiddenRequestException("Cannot change votes of other users");
         }
