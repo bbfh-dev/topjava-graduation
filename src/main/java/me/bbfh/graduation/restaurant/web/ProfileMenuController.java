@@ -1,6 +1,7 @@
 package me.bbfh.graduation.restaurant.web;
 
 import lombok.extern.slf4j.Slf4j;
+import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.restaurant.MenuUtil;
 import me.bbfh.graduation.restaurant.repository.DishRepository;
 import me.bbfh.graduation.restaurant.repository.MenuRepository;
@@ -40,5 +41,10 @@ public class ProfileMenuController {
     public MenuTo get(@PathVariable int menuId) {
         log.info("get id={}", menuId);
         return MenuUtil.getToFetchDishes(menuRepository.getExisted(menuId), dishRepository);
+    }
+
+    @GetMapping("/today")
+    public List<MenuTo> getToday() {
+        return MenuUtil.getTosFetchDishes(menuRepository.getAllByDate(DateTimeUtil.getCurrentDate()), dishRepository);
     }
 }
