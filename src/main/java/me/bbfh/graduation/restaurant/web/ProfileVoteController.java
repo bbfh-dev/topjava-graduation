@@ -3,6 +3,7 @@ package me.bbfh.graduation.restaurant.web;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
+import me.bbfh.graduation.common.error.ForbiddenRequestException;
 import me.bbfh.graduation.common.error.IllegalRequestDataException;
 import me.bbfh.graduation.common.error.NotFoundException;
 import me.bbfh.graduation.common.util.DateTimeUtil;
@@ -83,17 +84,15 @@ public class ProfileVoteController {
         }
 
         assert userVoteTo.getMenuId() != null;
-        if (!menuRepository.existsById(userVoteTo.getMenuId())) {
-            throw new NotFoundException("Provided menu doesn't exist with id=" + userVoteTo.getMenuId());
+        Menu menu = menuRepository.findById(userVoteTo.getMenuId()).orElseThrow();
+
+        Vote vote = voteRepository.findById(voteId).orElseThrow();
+        if (!vote.getUser().equals(authUser.getUser())) {
+            throw new ForbiddenRequestException("Cannot change votes of other users");
         }
 
-        if (!voteRepository.existsById(voteId)) {
-            throw new NotFoundException("Provided vote doesn't exist with id=" + voteId);
-        }
-
-        Vote vote = voteRepository.save(new Vote(voteId, DateTimeUtil.getCurrentDate(), authUser.getUser(),
-                menuRepository.getReferenceById(userVoteTo.getMenuId())));
-        return VoteMapper.toTo(vote);
+        return VoteMapper.toTo(voteRepository.save(
+                new Vote(voteId, DateTimeUtil.getCurrentDate(), authUser.getUser(), menu)));
     }
 
     @DeleteMapping("{voteId}")
