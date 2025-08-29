@@ -41,6 +41,11 @@ public class ProfileVoteController {
         return VoteMapper.toTos(voteRepository.getAll(authUser.getUser().getId()));
     }
 
+    @GetMapping("history")
+    public List<VoteTo> getHistory() {
+        return VoteMapper.toTos(voteRepository.findAll());
+    }
+
     @GetMapping("today")
     public List<VoteTo> getToday() {
         return VoteMapper.toTos(voteRepository.getByDate(DateTimeUtil.getCurrentDate()));
