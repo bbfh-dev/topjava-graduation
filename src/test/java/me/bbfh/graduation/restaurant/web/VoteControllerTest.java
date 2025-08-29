@@ -16,10 +16,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static me.bbfh.graduation.restaurant.VoteTestData.*;
-import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
+import static me.bbfh.graduation.user.UserTestData.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,19 +29,18 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
     @Autowired
     private VoteRepository voteRepository;
 
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void history() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileVoteController.REST_URL))
+    private void getAllAndAssert(String endpoint, Predicate<Vote> filter) throws Exception {
+        ResultActions action = perform(MockMvcRequestBuilders.get(endpoint))
                 .andDo(print())
                 .andExpect(status().isOk());
-
         List<VoteTo> createdList = VOTE_TO_MATCHER.readListFromJson(action);
 
         Map<Integer, Vote> expectedMap = VOTES.stream()
+                .filter(filter)
                 .collect(Collectors.toMap(Vote::getId, r -> r));
 
-        for (VoteTo created : createdList) {
+        for (int i = 0; i < expectedMap.size(); i++) {
+            VoteTo created = createdList.get(i);
             Vote expected = expectedMap.get(created.getId());
             if (expected == null) {
                 throw new IllegalStateException("There must be no extra restaurants");
@@ -53,21 +53,24 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
+    void getAll() throws Exception {
+        getAllAndAssert(ProfileVoteController.REST_URL,
+                vote -> vote.getUser().equals(user));
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void getHistory() throws Exception {
+        getAllAndAssert(ProfileVoteController.REST_URL + "/history",
+                vote -> true);
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
     void getToday() throws Exception {
         DateTimeUtil.overrideCurrentDate(VOTE_DATE);
-        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileVoteController.REST_URL + "/today"))
-                .andDo(print())
-                .andExpect(status().isOk());
-
-        List<VoteTo> createdList = VOTE_TO_MATCHER.readListFromJson(action);
-
-        for (int i = 0; i < createdList.size(); i++) {
-            VoteTo created = createdList.get(i);
-            Vote expected = VOTES.get(i);
-            VoteTo expectedTo = VoteMapper.toTo(expected);
-            VOTE_TO_MATCHER.assertMatch(created, expectedTo);
-            VOTE_MATCHER.assertMatch(voteRepository.getExisted(created.id()), expected);
-        }
+        getAllAndAssert(ProfileVoteController.REST_URL + "/today",
+                vote -> vote.getVoteDate().equals(DateTimeUtil.getCurrentDate()));
     }
 
     @Test
