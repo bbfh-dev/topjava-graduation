@@ -11,11 +11,11 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface DishRepository extends BaseRepository<Dish> {
 
-    @Query("SELECT e FROM #{#entityName} e WHERE e.menu.id=:menuId")
+    @Query("SELECT e FROM Dish e WHERE e.menu.id=:menuId")
     List<Dish> getAll(int menuId);
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM #{#entityName} e WHERE e.menu.id=:menuId")
+    @Query("DELETE FROM Dish e WHERE e.menu.id=:menuId")
     void deleteAll(int menuId);
 }
