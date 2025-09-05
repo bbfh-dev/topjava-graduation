@@ -45,6 +45,6 @@ public class ProfileMenuController {
 
     @GetMapping("/today")
     public List<MenuTo> getToday() {
-        return MenuUtil.getTosFetchDishes(menuRepository.getAllByDate(DateTimeUtil.getCurrentDate()), dishRepository);
+        return MenuUtil.getTosFetchDishes(menuRepository.getByDate(DateTimeUtil.getCurrentDate()), dishRepository);
     }
 }

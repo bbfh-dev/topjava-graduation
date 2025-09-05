@@ -30,6 +30,6 @@ public class ProfileVoteController {
 
     @GetMapping
     public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
-        return VoteMapper.toTos(voteRepository.getAll(authUser.getUser().getId()));
+        return VoteMapper.toTos(voteRepository.getByUserId(authUser.getUser().getId()));
     }
 }

@@ -44,7 +44,7 @@ public class VoteController {
 
     @GetMapping("today")
     public List<VoteTo> getToday() {
-        return VoteMapper.toTos(voteRepository.getByDate(DateTimeUtil.getCurrentDate()));
+        return VoteMapper.toTos(voteRepository.getByUserIdAndDate(DateTimeUtil.getCurrentDate()));
     }
 
     @PostMapping
@@ -60,7 +60,7 @@ public class VoteController {
             throw new IllegalRequestDataException("Can't vote for an irrelevant Menu. Vote for a menu that is relevant today.");
         }
 
-        Vote existingVote = voteRepository.getByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
+        Vote existingVote = voteRepository.getByUserIdAndDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
         if (existingVote != null) {
             throw new IllegalRequestDataException("Already casted a vote with id=" + existingVote.getId());
         }
@@ -96,13 +96,13 @@ public class VoteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
     public void retract(@PathVariable int voteId, @AuthenticationPrincipal AuthUser authUser) {
-        voteRepository.deleteFromUser(authUser.getUser().getId(), voteId);
+        voteRepository.deleteByUserId(authUser.getUser().getId(), voteId);
     }
 
     @DeleteMapping("today")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
     public void retractToday(@AuthenticationPrincipal AuthUser authUser) {
-        voteRepository.deleteFromUserByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
+        voteRepository.deleteByUserIdAndDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
     }
 }

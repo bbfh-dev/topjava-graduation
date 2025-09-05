@@ -13,21 +13,21 @@ import java.util.List;
 public interface VoteRepository extends BaseRepository<Vote> {
 
     @Query("SELECT e FROM Vote e WHERE e.user.id=:userId")
-    List<Vote> getAll(int userId);
+    List<Vote> getByUserId(int userId);
 
     @Query("SELECT e FROM Vote e WHERE e.user.id=:userId AND e.voteDate=:voteDate")
-    Vote getByDate(int userId, LocalDate voteDate);
+    Vote getByUserIdAndDate(int userId, LocalDate voteDate);
 
     @Query("SELECT e FROM Vote e WHERE e.voteDate=:voteDate")
-    List<Vote> getByDate(LocalDate voteDate);
+    List<Vote> getByUserIdAndDate(LocalDate voteDate);
 
     @Transactional
     @Modifying
     @Query("DELETE FROM Vote e WHERE e.user.id=:userId AND e.id=:voteId")
-    void deleteFromUser(int userId, int voteId);
+    void deleteByUserId(int userId, int voteId);
 
     @Transactional
     @Modifying
     @Query("DELETE FROM Vote e WHERE e.user.id=:userId AND e.voteDate=:voteDate")
-    void deleteFromUserByDate(int userId, LocalDate voteDate);
+    void deleteByUserIdAndDate(int userId, LocalDate voteDate);
 }
