@@ -12,7 +12,7 @@ import me.bbfh.graduation.common.model.NamedEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
 @Table(name = "restaurant")
-public class Restaurant extends NamedEntity implements HasId {
+public class Restaurant extends NamedEntity {
 
     public Restaurant(Integer id, String name) {
         super(id, name);
