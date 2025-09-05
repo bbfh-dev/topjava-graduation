@@ -3,7 +3,6 @@ package me.bbfh.graduation.restaurant.web;
 import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
 import me.bbfh.graduation.restaurant.mapper.VoteMapper;
-import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.repository.VoteRepository;
 import me.bbfh.graduation.restaurant.to.VoteTo;
 import org.springframework.http.MediaType;
