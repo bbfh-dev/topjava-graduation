@@ -21,7 +21,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ProfileMenuController {
 
-    static final String REST_URL = "/api/profile/menus";
+    static final String REST_URL = "/api/menus";
 
     protected final MenuRepository menuRepository;
 

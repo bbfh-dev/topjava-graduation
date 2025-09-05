@@ -20,7 +20,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ProfileRestaurantController {
 
-    static final String REST_URL = "/api/profile/restaurants";
+    static final String REST_URL = "/api/restaurants";
 
     protected final RestaurantRepository repository;
 
