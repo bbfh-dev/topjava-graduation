@@ -14,14 +14,16 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString(callSuper = true)
+@ToString(callSuper = true, doNotUseGetters = true)
 @Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "relevancy_date"}, name = "menu_unique_restaurant_date_idx")})
 public class Menu extends BaseEntity {
 
+    @ToString.Exclude
     @NotNull
     @Column(name = "relevancy_date", nullable = false, columnDefinition = "date")
     private LocalDate relevancyDate;
 
+    @ToString.Exclude
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id")

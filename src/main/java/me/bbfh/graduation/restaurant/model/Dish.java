@@ -11,7 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true)
+@ToString(callSuper = true, doNotUseGetters = true)
 @Table(name = "dish")
 public class Dish extends NamedEntity {
 
@@ -19,6 +19,7 @@ public class Dish extends NamedEntity {
     @Column(name = "price", nullable = false)
     private Long price;
 
+    @ToString.Exclude
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
