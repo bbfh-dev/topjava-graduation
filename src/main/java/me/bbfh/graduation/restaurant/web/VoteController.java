@@ -37,6 +37,10 @@ public class VoteController {
         this.menuRepository = menuRepository;
     }
 
+    // TODO: аналогично. Но это не сомнительно, а явно вредный эндпоинт, т. к. данных в разы больше. Пользователю достаточно поштучно только своих голосов.
+    // Обращу внимание, что по /api/profile/votes должны быть все доступные пользователю голоса. А по /api/profile/votes/... - какие-то выборки или представления. А сейчас получилось наоборот: по вложенному url больше данных, чем по корневому.
+    //• не проработана работа админа с меню. Админ вносит меню ресторана на дату, и потом захочет посмотреть его. Для этого ему надо сначала запросить всю историю, чтобы докопаться до id. Надо подумать, какие выборки точно пригодятся.
+    //• блюда меню валидируются аж при сохранении в БД, а должны - на входе в контроллер (в MenuTo сделай так: List<@Valid DishTo> dishes;)
     @GetMapping("history")
     public List<VoteTo> getHistory() {
         return VoteMapper.toTos(voteRepository.findAll());
@@ -47,6 +51,7 @@ public class VoteController {
         return VoteMapper.toTos(voteRepository.getByUserIdAndDate(DateTimeUtil.getCurrentDate()));
     }
 
+    // TODO: по ТЗ пользователи выбирают ресторан. У тебя же архитектура, начиная с БД, такая, что ресторан даже не может быть выбран без меню.
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -92,6 +97,7 @@ public class VoteController {
                 new Vote(voteId, DateTimeUtil.getCurrentDate(), authUser.getUser(), menu)));
     }
 
+    // TODO: удаление голоса ломает запрет на изменение мнения после 11. Удалил - проголосовал заново после 11 = изменил голос.
     @DeleteMapping("{voteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

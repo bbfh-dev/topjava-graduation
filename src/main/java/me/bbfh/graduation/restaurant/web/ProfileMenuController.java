@@ -32,6 +32,7 @@ public class ProfileMenuController {
         this.dishRepository = dishRepository;
     }
 
+    // TODO:  все меню всех ресторанов за всю историю - обычным пользователям такое точно не надо. Админам - тоже сомнительно, т. к. очень много данных, да и юз-кейс непонятен.
     @GetMapping
     public List<MenuTo> getAll() {
         return MenuUtil.getTosFetchDishes(menuRepository.findAll(), dishRepository);
