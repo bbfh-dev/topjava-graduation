@@ -96,19 +96,4 @@ public class VoteController {
         return VoteMapper.toTo(voteRepository.save(
                 new Vote(voteId, DateTimeUtil.getCurrentDate(), authUser.getUser(), menu)));
     }
-
-    // TODO: удаление голоса ломает запрет на изменение мнения после 11. Удалил - проголосовал заново после 11 = изменил голос.
-    @DeleteMapping("{voteId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
-    public void retract(@PathVariable int voteId, @AuthenticationPrincipal AuthUser authUser) {
-        voteRepository.deleteByUserId(authUser.getUser().getId(), voteId);
-    }
-
-    @DeleteMapping("today")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
-    public void retractToday(@AuthenticationPrincipal AuthUser authUser) {
-        voteRepository.deleteByUserIdAndDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
-    }
 }

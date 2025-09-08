@@ -75,29 +75,6 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void retract() throws Exception {
-        perform(MockMvcRequestBuilders.delete(VoteController.REST_URL + "/" + VOTES.getFirst().getId()))
-                .andDo(print())
-                .andExpect(status().isNoContent())
-                .andReturn();
-
-        Assertions.assertFalse(voteRepository.existsById(VOTES.getFirst().getId()));
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void retractToday() throws Exception {
-        DateTimeUtil.overrideCurrentDate(VOTE_DATE);
-        perform(MockMvcRequestBuilders.delete(VoteController.REST_URL + "/today"))
-                .andDo(print())
-                .andExpect(status().isNoContent())
-                .andReturn();
-
-        Assertions.assertFalse(voteRepository.existsById(VOTES.getFirst().getId()));
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
     void vote() throws Exception {
         DateTimeUtil.overrideCurrentDate(NEW_VOTE_DATE);
         ResultActions action = perform(MockMvcRequestBuilders.post(VoteController.REST_URL)
