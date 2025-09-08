@@ -43,7 +43,6 @@ public class VoteController {
         return VoteMapper.toTos(voteRepository.getByUserIdAndDate(DateTimeUtil.getCurrentDate()));
     }
 
-    // TODO: по ТЗ пользователи выбирают ресторан. У тебя же архитектура, начиная с БД, такая, что ресторан даже не может быть выбран без меню.
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
