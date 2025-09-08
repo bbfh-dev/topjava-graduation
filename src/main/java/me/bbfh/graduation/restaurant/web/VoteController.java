@@ -41,11 +41,6 @@ public class VoteController {
     // Обращу внимание, что по /api/profile/votes должны быть все доступные пользователю голоса. А по /api/profile/votes/... - какие-то выборки или представления. А сейчас получилось наоборот: по вложенному url больше данных, чем по корневому.
     //• не проработана работа админа с меню. Админ вносит меню ресторана на дату, и потом захочет посмотреть его. Для этого ему надо сначала запросить всю историю, чтобы докопаться до id. Надо подумать, какие выборки точно пригодятся.
     //• блюда меню валидируются аж при сохранении в БД, а должны - на входе в контроллер (в MenuTo сделай так: List<@Valid DishTo> dishes;)
-    @GetMapping("history")
-    public List<VoteTo> getHistory() {
-        return VoteMapper.toTos(voteRepository.findAll());
-    }
-
     @GetMapping("today")
     public List<VoteTo> getToday() {
         return VoteMapper.toTos(voteRepository.getByUserIdAndDate(DateTimeUtil.getCurrentDate()));

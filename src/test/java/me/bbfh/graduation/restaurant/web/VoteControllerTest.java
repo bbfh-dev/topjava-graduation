@@ -59,13 +59,6 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = ADMIN_MAIL)
-    void getHistory() throws Exception {
-        getAllAndAssert(VoteController.REST_URL + "/history",
-                vote -> true);
-    }
-
-    @Test
     @WithUserDetails(value = USER_MAIL)
     void getToday() throws Exception {
         DateTimeUtil.overrideCurrentDate(VOTE_DATE);
