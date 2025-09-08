@@ -17,7 +17,7 @@ public class VoteTestData {
 
     private static final int VOTE1_ID = 1;
 
-    public static final LocalDate VOTE_DATE = LocalDate.now().minusDays(1);
+    public static final LocalDate VOTE_DATE = LocalDate.of(2025, 1, 1);
     public static final LocalDate NEW_VOTE_DATE = LocalDate.now();
 
     private static final Vote VOTE_1 = new Vote(VOTE1_ID, VOTE_DATE, user, MENUS.getFirst());
