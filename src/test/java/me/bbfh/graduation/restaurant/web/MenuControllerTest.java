@@ -43,7 +43,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void getAll() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileMenuController.REST_URL))
+        ResultActions action = perform(MockMvcRequestBuilders.get(MenuController.REST_URL))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -66,7 +66,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(ProfileMenuController.REST_URL + "/" + MENU_NOT_EXIST_ID))
+        perform(MockMvcRequestBuilders.get(MenuController.REST_URL + "/" + MENU_NOT_EXIST_ID))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -75,7 +75,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void get() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileMenuController.REST_URL + "/" + MENUS.getFirst().getId()))
+        ResultActions action = perform(MockMvcRequestBuilders.get(MenuController.REST_URL + "/" + MENUS.getFirst().getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
 

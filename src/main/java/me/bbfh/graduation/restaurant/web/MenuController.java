@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = ProfileMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = MenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @Transactional(readOnly = true)
-public class ProfileMenuController {
+public class MenuController {
 
     static final String REST_URL = "/api/menus";
 
@@ -27,7 +27,7 @@ public class ProfileMenuController {
 
     protected final DishRepository dishRepository;
 
-    public ProfileMenuController(MenuRepository menuRepository, DishRepository dishRepository) {
+    public MenuController(MenuRepository menuRepository, DishRepository dishRepository) {
         this.menuRepository = menuRepository;
         this.dishRepository = dishRepository;
     }

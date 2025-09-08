@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RestaurantControllerTest extends AbstractRestaurantControllerTest {
 
     private static final String ADMIN_REST_URL_SLASH = AdminRestaurantController.REST_URL + '/';
-    private static final String PROFILE_REST_URL_SLASH = ProfileRestaurantController.REST_URL + '/';
+    private static final String PROFILE_REST_URL_SLASH = RestaurantController.REST_URL + '/';
 
     @Autowired
     private RestaurantRepository repository;
@@ -55,7 +55,7 @@ public class RestaurantControllerTest extends AbstractRestaurantControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getAll() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(ProfileRestaurantController.REST_URL))
+        ResultActions action = perform(MockMvcRequestBuilders.get(RestaurantController.REST_URL))
                 .andDo(print())
                 .andExpect(status().isOk());
 
