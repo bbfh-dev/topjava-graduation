@@ -7,15 +7,13 @@ import me.bbfh.graduation.restaurant.to.VoteTo;
 import java.time.LocalDate;
 import java.util.List;
 
-import static me.bbfh.graduation.restaurant.MenuTestData.*;
+import static me.bbfh.graduation.restaurant.MenuTestData.MENUS;
 import static me.bbfh.graduation.restaurant.RestaurantTestData.RESTAURANT_1;
-import static me.bbfh.graduation.restaurant.RestaurantTestData.RESTAURANT_2;
 import static me.bbfh.graduation.user.UserTestData.admin;
 import static me.bbfh.graduation.user.UserTestData.user;
 
 public class VoteTestData {
     public static final MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class);
-    public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "user");
 
     private static final int VOTE1_ID = 1;
 

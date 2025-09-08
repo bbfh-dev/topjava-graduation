@@ -4,11 +4,9 @@ import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.common.util.JsonUtil;
 import me.bbfh.graduation.restaurant.mapper.VoteMapper;
 import me.bbfh.graduation.restaurant.model.Vote;
-import me.bbfh.graduation.restaurant.repository.VoteRepository;
 import me.bbfh.graduation.restaurant.to.VoteTo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,14 +18,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static me.bbfh.graduation.restaurant.VoteTestData.*;
-import static me.bbfh.graduation.user.UserTestData.*;
+import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
+import static me.bbfh.graduation.user.UserTestData.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class VoteControllerTest extends AbstractRestaurantControllerTest {
-
-    @Autowired
-    private VoteRepository voteRepository;
 
     private void getAllAndAssert(String endpoint, Predicate<Vote> filter) throws Exception {
         ResultActions action = perform(MockMvcRequestBuilders.get(endpoint))

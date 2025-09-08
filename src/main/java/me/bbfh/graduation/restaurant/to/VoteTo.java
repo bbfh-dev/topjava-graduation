@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import me.bbfh.graduation.common.HasId;
 import me.bbfh.graduation.common.to.BaseTo;
-import me.bbfh.graduation.restaurant.model.Vote;
 
 import java.time.LocalDate;
 
