@@ -1,5 +1,6 @@
 package me.bbfh.graduation.restaurant.to;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -23,9 +24,9 @@ public class MenuTo extends BaseTo implements HasId {
     Integer restaurantId;
 
     @NotNull
-    List<DishTo> dishes;
+    List<@Valid DishTo> dishes;
 
-    public MenuTo(Integer id, LocalDate relevancyDate, Integer restaurantId, List<DishTo> dishes) {
+    public MenuTo(Integer id, LocalDate relevancyDate, Integer restaurantId, List<@Valid DishTo> dishes) {
         super(id);
         this.relevancyDate = relevancyDate;
         this.restaurantId = restaurantId;
