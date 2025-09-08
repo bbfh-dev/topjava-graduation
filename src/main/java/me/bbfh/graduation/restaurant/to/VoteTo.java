@@ -31,6 +31,6 @@ public class VoteTo extends BaseTo implements HasId {
     @EqualsAndHashCode
     public static class RestTo {
         @NotNull
-        Integer menuId;
+        Integer restaurantId;
     }
 }

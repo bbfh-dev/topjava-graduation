@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static me.bbfh.graduation.restaurant.MenuTestData.*;
+import static me.bbfh.graduation.restaurant.RestaurantTestData.RESTAURANT_1;
+import static me.bbfh.graduation.restaurant.RestaurantTestData.RESTAURANT_2;
 import static me.bbfh.graduation.user.UserTestData.admin;
 import static me.bbfh.graduation.user.UserTestData.user;
 
@@ -28,10 +30,10 @@ public class VoteTestData {
     public static final List<Vote> VOTES = List.of(VOTE_1, VOTE_2);
 
     public static VoteTo.RestTo getNewVote() {
-        return new VoteTo.RestTo(MENUS.get(1).getId());
+        return new VoteTo.RestTo(RESTAURANT_1.getId());
     }
 
     public static VoteTo.RestTo getUpdatedVote() {
-        return new VoteTo.RestTo(MENUS.get(1).getId());
+        return new VoteTo.RestTo(RESTAURANT_1.getId());
     }
 }

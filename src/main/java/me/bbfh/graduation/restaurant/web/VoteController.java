@@ -48,14 +48,8 @@ public class VoteController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public VoteTo vote(@Valid @RequestBody VoteTo.RestTo userVoteTo, @AuthenticationPrincipal AuthUser authUser) {
-        Menu menu = menuRepository.getExisted(userVoteTo.getMenuId());
-        if (menu == null) {
-            throw new NotFoundException("Provided menu doesn't exist with id=" + userVoteTo.getMenuId());
-        }
-
-        if (!menu.getRelevancyDate().isEqual(DateTimeUtil.getCurrentDate())) {
-            throw new IllegalRequestDataException("Can't vote for an irrelevant Menu. Vote for a menu that is relevant today.");
-        }
+        Menu menu = menuRepository.getByRestaurantIdAndDate(userVoteTo.getRestaurantId(), DateTimeUtil.getCurrentDate())
+                .orElseThrow(() -> new NotFoundException("There is no today's Menu for restaurant id=" + userVoteTo.getRestaurantId()));
 
         Vote existingVote = voteRepository.getByUserIdAndDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
         if (existingVote != null) {
@@ -75,9 +69,9 @@ public class VoteController {
                     + DateTimeUtil.VOTE_TIME_LIMIT + " local time");
         }
 
-        assert userVoteTo.getMenuId() != null;
-        Menu menu = menuRepository.findById(userVoteTo.getMenuId())
-                .orElseThrow(() -> new NotFoundException("Provided menu doesn't exist with id=" + userVoteTo.getMenuId()));
+        assert userVoteTo.getRestaurantId() != null;
+        Menu menu = menuRepository.getByRestaurantIdAndDate(userVoteTo.getRestaurantId(), DateTimeUtil.getCurrentDate())
+                .orElseThrow(() -> new NotFoundException("Provided menu doesn't exist with restaurant id=" + userVoteTo.getRestaurantId()));
 
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new NotFoundException("vote not found with id=" + voteId));

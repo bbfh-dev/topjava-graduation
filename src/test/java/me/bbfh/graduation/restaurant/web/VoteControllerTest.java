@@ -88,7 +88,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getNewVote())))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isNotFound())
                 .andReturn();
     }
 
@@ -105,7 +105,7 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
 
         VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
         UPDATED_VOTE.setId(created.getId());
-        Assertions.assertEquals(created.getMenuId(), getUpdatedVote().getMenuId());
+        Assertions.assertEquals(created.getMenuId(), UPDATED_VOTE.getMenu().getId());
         VOTE_TO_MATCHER.assertMatch(created, VoteMapper.toTo(UPDATED_VOTE));
     }
 
