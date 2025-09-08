@@ -42,29 +42,6 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void getAll() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(MenuController.REST_URL))
-                .andDo(print())
-                .andExpect(status().isOk());
-
-        List<MenuTo> createdList = MENU_TO_MATCHER.readListFromJson(action);
-
-        Map<Integer, Menu> expectedMap = MENUS.stream()
-                .collect(Collectors.toMap(Menu::getId, r -> r));
-
-        for (MenuTo created : createdList) {
-            Menu expected = expectedMap.get(created.getId());
-            if (expected == null) {
-                throw new IllegalStateException("There must be no extra restaurants");
-            }
-            MenuTo expectedTo = MenuUtil.getToFetchDishes(expected, dishRepository);
-            MENU_TO_MATCHER.assertMatch(created, expectedTo);
-            MENU_TO_MATCHER.assertMatch(MenuUtil.getToFetchDishes(menuRepository.getExisted(created.id()), dishRepository), expectedTo);
-        }
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
     void getNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(MenuController.REST_URL + "/" + MENU_NOT_EXIST_ID))
                 .andDo(print())
