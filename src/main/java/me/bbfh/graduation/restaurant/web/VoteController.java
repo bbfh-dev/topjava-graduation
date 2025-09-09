@@ -37,7 +37,6 @@ public class VoteController {
         this.menuRepository = menuRepository;
     }
 
-    //• не проработана работа админа с меню. Админ вносит меню ресторана на дату, и потом захочет посмотреть его. Для этого ему надо сначала запросить всю историю, чтобы докопаться до id. Надо подумать, какие выборки точно пригодятся.
     @GetMapping("today")
     public List<VoteTo> getToday() {
         return VoteMapper.toTos(voteRepository.getByUserIdAndDate(DateTimeUtil.getCurrentDate()));

@@ -13,16 +13,20 @@ import me.bbfh.graduation.restaurant.to.MenuTo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static me.bbfh.graduation.restaurant.MenuTestData.*;
 import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
 import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,6 +40,20 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
 
     @Autowired
     private DishRepository dishRepository;
+
+    @Autowired
+    CacheManager cacheManager;
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void cachingWorks() throws Exception {
+        int id = MENUS.getFirst().getId();
+        perform(MockMvcRequestBuilders.get(MenuController.REST_URL + "/" + id))
+                .andExpect(status().isOk());
+
+        Cache cache = Objects.requireNonNull(cacheManager.getCache("menus"));
+        assertNotNull(cache.get(id));
+    }
 
     @Test
     @WithUserDetails(value = USER_MAIL)
@@ -65,7 +83,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void create() throws Exception {
         MenuTo newTo = getNewTo();
-        Assertions.assertNotNull(newTo.getRestaurantId());
+        assertNotNull(newTo.getRestaurantId());
         Restaurant restaurantRef = restaurantRepository.getReferenceById(newTo.getRestaurantId());
         Menu newMenu = MenuMapper.toEntity(newTo, restaurantRef);
 
@@ -80,10 +98,10 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         int newId = created.id();
         newMenu.setId(newId);
         newTo.setId(newId);
-        Assertions.assertNotNull(newTo.getDishes());
+        assertNotNull(newTo.getDishes());
         IntStream.range(0, newTo.getDishes().size()).forEach(i -> {
             DishTo dishTo = newTo.getDishes().get(i);
-            Assertions.assertNotNull(createdTo.getDishes());
+            assertNotNull(createdTo.getDishes());
             dishTo.setId(createdTo.getDishes().get(i).getId());
         });
 
@@ -96,7 +114,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void update() throws Exception {
         MenuTo updatedTo = getUpdatedTo();
-        Assertions.assertNotNull(updatedTo.getRestaurantId());
+        assertNotNull(updatedTo.getRestaurantId());
         Restaurant restaurantRef = restaurantRepository.getReferenceById(updatedTo.getRestaurantId());
         Menu updatedMenu = MenuMapper.toEntity(updatedTo, restaurantRef);
 
@@ -111,10 +129,10 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         int newId = responseMenu.id();
         updatedMenu.setId(newId);
         updatedTo.setId(newId);
-        Assertions.assertNotNull(updatedTo.getDishes());
+        assertNotNull(updatedTo.getDishes());
         IntStream.range(0, updatedTo.getDishes().size()).forEach(i -> {
             DishTo dishTo = updatedTo.getDishes().get(i);
-            Assertions.assertNotNull(responseMenuTo.getDishes());
+            assertNotNull(responseMenuTo.getDishes());
             dishTo.setId(responseMenuTo.getDishes().get(i).getId());
         });
 

@@ -6,6 +6,7 @@ import me.bbfh.graduation.restaurant.MenuUtil;
 import me.bbfh.graduation.restaurant.repository.DishRepository;
 import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.to.MenuTo;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ public class MenuController {
     }
 
     @GetMapping("/{menuId}")
+    @Cacheable(value = "menus", key = "#menuId", unless = "#result == null")
     public MenuTo get(@PathVariable int menuId) {
         log.info("get id={}", menuId);
         return MenuUtil.getToFetchDishes(menuRepository.getExisted(menuId), dishRepository);

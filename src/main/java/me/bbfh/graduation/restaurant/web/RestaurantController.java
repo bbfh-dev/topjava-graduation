@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,12 +30,14 @@ public class RestaurantController {
     }
 
     @GetMapping
+    @Cacheable(value = "restaurants")
     public List<Restaurant> getAll(@AuthenticationPrincipal AuthUser authUser) {
         log.info("getAll {}", authUser);
         return repository.findAll();
     }
 
     @GetMapping("/{restaurantId}")
+    @Cacheable(value = "restaurants", key = "#restaurantId", unless = "#result == null")
     public Restaurant get(@PathVariable int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
         log.info("get id={} by {}", restaurantId, authUser);
         return repository.getExisted(restaurantId);

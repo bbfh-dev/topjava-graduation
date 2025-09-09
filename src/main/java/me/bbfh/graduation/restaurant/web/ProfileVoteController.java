@@ -5,6 +5,7 @@ import me.bbfh.graduation.app.AuthUser;
 import me.bbfh.graduation.restaurant.mapper.VoteMapper;
 import me.bbfh.graduation.restaurant.repository.VoteRepository;
 import me.bbfh.graduation.restaurant.to.VoteTo;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class ProfileVoteController {
     }
 
     @GetMapping
+    @Cacheable(value = "votes", key = "#authUser")
     public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
         return VoteMapper.toTos(voteRepository.getByUserId(authUser.getUser().getId()));
     }
