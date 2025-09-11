@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -65,7 +64,7 @@ public class AdminMenuController {
         return ResponseEntity.created(uriOfNewResource)
                 .body(MenuMapper.toTo(menu, dishes.stream()
                         .map(DishMapper::toTo)
-                        .toList()));
+                        .collect(Collectors.toSet())));
     }
 
     @PutMapping(value = "/{menuId}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -94,7 +93,7 @@ public class AdminMenuController {
 
         return MenuMapper.toTo(menu, dishes.stream()
                 .map(DishMapper::toTo)
-                .toList());
+                .collect(Collectors.toSet()));
     }
 
     @DeleteMapping(value = "/{menuId}")

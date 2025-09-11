@@ -37,15 +37,15 @@ public class MenuTestData {
                 MENU_1.getId(),
                 MENU_1.getRelevancyDate(),
                 MENU_1.getRestaurant().getId(),
-                List.of(
+                Set.of(
                         new DishTo(DISH_1.getId(), "Updated Dish #1", (long) 1050),
                         new DishTo(null, "New Dish", (long) 835)
                 )
         );
     }
 
-    public static List<DishTo> getNewDishes() {
-        return List.of(
+    public static Set<DishTo> getNewDishes() {
+        return Set.of(
                 new DishTo(null, "Example Dish #A", (long) 1200),
                 new DishTo(null, "Example Dish #B", (long) 5000)
         );

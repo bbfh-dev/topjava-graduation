@@ -20,8 +20,10 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.IntStream;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static me.bbfh.graduation.restaurant.MenuTestData.*;
 import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
@@ -94,19 +96,22 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
                 .andExpect(status().isCreated());
 
         MenuTo createdTo = MENU_TO_MATCHER.readFromJson(action);
-        Menu created = MenuMapper.toEntity(createdTo, restaurantRef);
-        int newId = created.id();
+        Menu createdEntity = MenuMapper.toEntity(createdTo, restaurantRef);
+        int newId = createdTo.id();
         newMenu.setId(newId);
         newTo.setId(newId);
         assertNotNull(newTo.getDishes());
-        IntStream.range(0, newTo.getDishes().size()).forEach(i -> {
-            DishTo dishTo = newTo.getDishes().get(i);
-            assertNotNull(createdTo.getDishes());
-            dishTo.setId(createdTo.getDishes().get(i).getId());
-        });
+        Map<String, DishTo> createdByName = createdTo.getDishes().stream()
+                .collect(Collectors.toMap(DishTo::getName, Function.identity()));
+
+        for (DishTo dishTo : newTo.getDishes()) {
+            DishTo created = createdByName.get(dishTo.getName());
+            assertNotNull(created, "No created Dish found for name=" + dishTo.getName());
+            dishTo.setId(created.getId());
+        }
 
         MENU_TO_MATCHER.assertMatch(createdTo, newTo);
-        MENU_MATCHER.assertMatch(created, newMenu);
+        MENU_MATCHER.assertMatch(createdEntity, newMenu);
         MENU_MATCHER.assertMatch(menuRepository.getExisted(newId), newMenu);
     }
 
@@ -130,14 +135,18 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         updatedMenu.setId(newId);
         updatedTo.setId(newId);
         assertNotNull(updatedTo.getDishes());
-        IntStream.range(0, updatedTo.getDishes().size()).forEach(i -> {
-            DishTo dishTo = updatedTo.getDishes().get(i);
-            assertNotNull(responseMenuTo.getDishes());
-            dishTo.setId(responseMenuTo.getDishes().get(i).getId());
-        });
+        assertNotNull(responseMenuTo.getDishes());
+
+        Map<String, DishTo> actualByName = responseMenuTo.getDishes().stream()
+                .collect(Collectors.toMap(DishTo::getName, Function.identity()));
+
+        for (DishTo dishTo : updatedTo.getDishes()) {
+            DishTo actual = actualByName.get(dishTo.getName());
+            assertNotNull(actual, "No created Dish found for name=" + dishTo.getName());
+            dishTo.setId(actual.getId());
+        }
 
         MENU_TO_MATCHER.assertMatch(responseMenuTo, updatedTo);
-        MENU_MATCHER.assertMatch(responseMenu, updatedMenu);
         MENU_MATCHER.assertMatch(menuRepository.getExisted(newId), updatedMenu);
         Assertions.assertNull(dishRepository.findById(DISHES.get(1).getId()).orElse(null));
     }

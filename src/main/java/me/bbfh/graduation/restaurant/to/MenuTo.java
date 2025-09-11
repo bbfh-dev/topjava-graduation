@@ -10,7 +10,7 @@ import me.bbfh.graduation.common.HasId;
 import me.bbfh.graduation.common.to.BaseTo;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Value
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
@@ -24,9 +24,9 @@ public class MenuTo extends BaseTo implements HasId {
     Integer restaurantId;
 
     @NotNull
-    List<@Valid DishTo> dishes;
+    Set<@Valid DishTo> dishes;
 
-    public MenuTo(Integer id, LocalDate relevancyDate, Integer restaurantId, List<@Valid DishTo> dishes) {
+    public MenuTo(Integer id, LocalDate relevancyDate, Integer restaurantId, Set<@Valid DishTo> dishes) {
         super(id);
         this.relevancyDate = relevancyDate;
         this.restaurantId = restaurantId;

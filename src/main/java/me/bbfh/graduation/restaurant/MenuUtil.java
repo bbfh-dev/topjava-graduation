@@ -7,6 +7,7 @@ import me.bbfh.graduation.restaurant.model.Menu;
 import me.bbfh.graduation.restaurant.to.MenuTo;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class MenuUtil {
@@ -20,6 +21,6 @@ public class MenuUtil {
     public static MenuTo getToFetchDishes(Menu menu) {
         return MenuMapper.toTo(menu, menu.getDishes().stream()
                 .map(DishMapper::toTo)
-                .toList());
+                .collect(Collectors.toSet()));
     }
 }

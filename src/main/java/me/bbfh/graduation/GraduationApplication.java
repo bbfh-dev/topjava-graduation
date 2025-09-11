@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @SpringBootApplication
@@ -41,14 +40,12 @@ public class GraduationApplication {
         Restaurant restaurantA = restaurantRepository.save(new Restaurant(null, "My Restaurant A"));
         Restaurant restaurantB = restaurantRepository.save(new Restaurant(null, "My Restaurant B"));
 
-        Set<Dish> dishesA1 = new HashSet<>();
-        dishesA1.add(new Dish(null, "My Dish B1", (long) 1099));
-        menuRepository.save(new Menu(null, DateTimeUtil.getCurrentDate().minusDays(1), restaurantA, dishesA1));
+        menuRepository.save(new Menu(null, DateTimeUtil.getCurrentDate().minusDays(1), restaurantA,
+                Set.of(new Dish(null, "My Dish B1", (long) 1099))));
 
-        Set<Dish> dishesA2 = new HashSet<>();
-        dishesA2.add(new Dish(null, "My Dish A1", (long) 1700));
-        dishesA2.add(new Dish(null, "My Dish A2", (long) 2550));
-        menuRepository.save(new Menu(null, DateTimeUtil.getCurrentDate(), restaurantA, dishesA2));
+        menuRepository.save(new Menu(null, DateTimeUtil.getCurrentDate(), restaurantA,
+                Set.of(new Dish(null, "My Dish A1", (long) 1700),
+                        new Dish(null, "My Dish A2", (long) 2550))));
 
         menuRepository.save(new Menu(null, DateTimeUtil.getCurrentDate(), restaurantB));
     }

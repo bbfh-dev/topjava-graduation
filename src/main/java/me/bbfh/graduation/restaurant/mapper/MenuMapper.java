@@ -5,10 +5,10 @@ import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.to.DishTo;
 import me.bbfh.graduation.restaurant.to.MenuTo;
 
-import java.util.List;
+import java.util.Set;
 
 public class MenuMapper {
-    public static MenuTo toTo(Menu menu, List<DishTo> dishTos) {
+    public static MenuTo toTo(Menu menu, Set<DishTo> dishTos) {
         return new MenuTo(menu.getId(), menu.getRelevancyDate(), menu.getRestaurant().getId(), dishTos);
     }
 
