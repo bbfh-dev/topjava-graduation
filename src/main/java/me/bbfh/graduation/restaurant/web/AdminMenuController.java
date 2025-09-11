@@ -102,7 +102,6 @@ public class AdminMenuController {
     @Transactional
     public void delete(@PathVariable int menuId, @AuthenticationPrincipal AuthUser authUser) {
         log.info("delete id={} by {}", menuId, authUser);
-        dishRepository.deleteAll(menuId);
         menuRepository.deleteExisted(menuId);
     }
 }
