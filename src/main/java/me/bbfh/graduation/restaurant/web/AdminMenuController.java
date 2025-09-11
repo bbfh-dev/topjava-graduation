@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
 import me.bbfh.graduation.common.error.IllegalRequestDataException;
+import me.bbfh.graduation.restaurant.MenuUtil;
 import me.bbfh.graduation.restaurant.mapper.DishMapper;
 import me.bbfh.graduation.restaurant.mapper.MenuMapper;
 import me.bbfh.graduation.restaurant.model.Dish;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -55,16 +57,12 @@ public class AdminMenuController {
         log.info("create {}", menuTo);
         checkNew(menuTo);
 
+        Assert.notNull(menuTo.getRestaurantId(), "restaurant id must be defined");
         Menu menu = menuRepository.save(MenuMapper.toEntity(menuTo, restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
-        List<Dish> dishes = menuTo.getDishes().stream()
-                .map(dishTo -> dishRepository.save(DishMapper.toEntity(dishTo, menu)))
-                .toList();
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath().path(REST_URL).build().toUri();
         return ResponseEntity.created(uriOfNewResource)
-                .body(MenuMapper.toTo(menu, dishes.stream()
-                        .map(DishMapper::toTo)
-                        .collect(Collectors.toSet())));
+                .body(MenuUtil.getToFetchDishes(menu));
     }
 
     @PutMapping(value = "/{menuId}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -77,6 +75,7 @@ public class AdminMenuController {
             throw new IllegalRequestDataException("Can only update a Menu that already exists.");
         }
 
+        Assert.notNull(menuTo.getRestaurantId(), "restaurant id must be defined");
         Menu menu = menuRepository.save(MenuMapper.toEntity(menuTo,
                 restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
         Map<Integer, Dish> databaseDishes =
@@ -85,7 +84,7 @@ public class AdminMenuController {
 
         List<Dish> dishes = menuTo.getDishes().stream().map(dishTo -> {
             databaseDishes.remove(dishTo.getId());
-            return dishRepository.save(DishMapper.toEntity(dishTo, menu));
+            return dishRepository.save(DishMapper.toEntity(dishTo));
         }).toList();
 
         // Delete dishes that are no longer referenced

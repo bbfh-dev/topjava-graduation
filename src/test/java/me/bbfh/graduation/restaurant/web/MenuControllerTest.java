@@ -98,7 +98,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         MenuTo createdTo = MENU_TO_MATCHER.readFromJson(action);
         Menu createdEntity = MenuMapper.toEntity(createdTo, restaurantRef);
         int newId = createdTo.id();
-        newMenu.setId(newId);
+
         newTo.setId(newId);
         assertNotNull(newTo.getDishes());
         Map<String, DishTo> createdByName = createdTo.getDishes().stream()
@@ -110,9 +110,11 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
             dishTo.setId(created.getId());
         }
 
+        newMenu = MenuMapper.toEntity(newTo, restaurantRef);
+        newMenu.setId(newId);
+
         MENU_TO_MATCHER.assertMatch(createdTo, newTo);
         MENU_MATCHER.assertMatch(createdEntity, newMenu);
-        MENU_MATCHER.assertMatch(menuRepository.getExisted(newId), newMenu);
     }
 
     @Test
@@ -146,8 +148,11 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
             dishTo.setId(actual.getId());
         }
 
+        updatedMenu = MenuMapper.toEntity(updatedTo, restaurantRef);
+        updatedMenu.setId(newId);
+
         MENU_TO_MATCHER.assertMatch(responseMenuTo, updatedTo);
-        MENU_MATCHER.assertMatch(menuRepository.getExisted(newId), updatedMenu);
+        MENU_MATCHER.assertMatch(responseMenu, updatedMenu);
         Assertions.assertNull(dishRepository.findById(DISHES.get(1).getId()).orElse(null));
     }
 

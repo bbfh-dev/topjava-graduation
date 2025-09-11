@@ -13,7 +13,7 @@ public class MenuMapper {
     }
 
     public static Menu toEntity(MenuTo menuTo, Restaurant restaurant) {
-        return new Menu(menuTo.getId(), menuTo.getRelevancyDate(), restaurant);
+        return new Menu(menuTo.getId(), menuTo.getRelevancyDate(), restaurant, DishMapper.toEntities(menuTo.getDishes()));
     }
 }
 
