@@ -82,6 +82,7 @@ public class AdminMenuController {
                 dishRepository.getAll(menu.getId()).stream()
                         .collect(Collectors.toMap(Dish::getId, dish -> dish));
 
+        Assert.notNull(menuTo.getDishes(), "menu dishes must be defined");
         List<Dish> dishes = menuTo.getDishes().stream().map(dishTo -> {
             databaseDishes.remove(dishTo.getId());
             return dishRepository.save(DishMapper.toEntity(dishTo));
