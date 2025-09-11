@@ -36,7 +36,6 @@ public class AdminRestaurantController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<Restaurant> create(@Valid @RequestBody RestaurantTo restaurantTo) {
         log.info("create {}", restaurantTo);
@@ -49,7 +48,7 @@ public class AdminRestaurantController {
     @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    public ResponseEntity<Restaurant> update(@PathVariable int restaurantId,
+    public RestaurantTo update(@PathVariable int restaurantId,
                                              @RequestBody @Valid RestaurantTo restaurantTo,
                                              @AuthenticationPrincipal AuthUser authUser) {
         log.info("update {} by {}", restaurantTo, authUser);
@@ -57,7 +56,7 @@ public class AdminRestaurantController {
         Restaurant restaurant = RestaurantMapper.toEntity(restaurantTo);
         restaurant.setId(restaurantId);
         Restaurant created = repository.save(restaurant);
-        return ResponseEntity.ok().body(created);
+        return RestaurantMapper.toTo(created);
     }
 
     @DeleteMapping(value = "/{restaurantId}")

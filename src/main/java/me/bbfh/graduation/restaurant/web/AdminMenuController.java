@@ -50,7 +50,6 @@ public class AdminMenuController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<MenuTo> create(@Valid @RequestBody MenuTo menuTo) {
         log.info("create {}", menuTo);
