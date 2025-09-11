@@ -8,12 +8,13 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @ToString(callSuper = true, doNotUseGetters = true)
 @Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "relevancy_date"}, name = "menu_unique_restaurant_date_idx")})
 public class Menu extends BaseEntity {
@@ -30,9 +31,19 @@ public class Menu extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
-    public Menu(Integer id, LocalDate relevancyDate, Restaurant restaurant) {
+    @ToString.Exclude
+    @NotNull
+    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Dish> dishes = new HashSet<>();
+
+    public Menu(Integer id, LocalDate relevancyDate, Restaurant restaurant, Set<Dish> dishes) {
         super(id);
         this.relevancyDate = relevancyDate;
         this.restaurant = restaurant;
+        this.dishes = dishes;
+    }
+
+    public Menu(Integer id, LocalDate relevancyDate, Restaurant restaurant) {
+        this(id, relevancyDate, restaurant, new HashSet<>());
     }
 }

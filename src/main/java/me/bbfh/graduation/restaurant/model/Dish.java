@@ -31,4 +31,8 @@ public class Dish extends NamedEntity {
         this.price = price;
         this.menu = menu;
     }
+
+    public Dish(Integer id, String name, Long price) {
+        this(id, name, price, null);
+    }
 }
