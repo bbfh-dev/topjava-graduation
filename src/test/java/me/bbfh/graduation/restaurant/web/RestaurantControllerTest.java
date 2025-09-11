@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import static me.bbfh.graduation.restaurant.RestaurantTestData.*;
 import static me.bbfh.graduation.user.UserTestData.ADMIN_MAIL;
 import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,17 +62,9 @@ public class RestaurantControllerTest extends AbstractRestaurantControllerTest {
 
         List<Restaurant> createdList = RESTAURANT_MATCHER.readListFromJson(action);
 
-        Map<Integer, Restaurant> expectedMap = RESTAURANTS.stream()
-                .collect(Collectors.toMap(Restaurant::getId, r -> r));
-
-        for (Restaurant created : createdList) {
-            Restaurant expected = expectedMap.get(created.getId());
-            if (expected == null) {
-                throw new IllegalStateException("There must be no extra restaurants");
-            }
-            RESTAURANT_MATCHER.assertMatch(created, expected);
-            RESTAURANT_MATCHER.assertMatch(repository.getExisted(created.id()), expected);
-        }
+        assertThat(createdList)
+                .usingRecursiveFieldByFieldElementComparator()
+                .hasSameElementsAs(RESTAURANTS);
     }
 
     @Test

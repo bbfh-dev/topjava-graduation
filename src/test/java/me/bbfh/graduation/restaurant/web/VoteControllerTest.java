@@ -14,9 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static me.bbfh.graduation.restaurant.VoteTestData.*;
 import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
@@ -33,19 +31,11 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
                 .andExpect(status().isOk());
         List<VoteTo> createdList = VOTE_TO_MATCHER.readListFromJson(action);
 
-        Map<Integer, Vote> expectedMap = VOTES.stream()
-                .filter(filter)
-                .collect(Collectors.toMap(Vote::getId, r -> r));
-
-        for (int i = 0; i < expectedMap.size(); i++) {
-            VoteTo created = createdList.get(i);
-            Vote expected = expectedMap.get(created.getId());
-            if (expected == null) {
-                throw new IllegalStateException("There must be no extra restaurants");
-            }
-            VoteTo expectedTo = VoteMapper.toTo(expected);
-            VOTE_TO_MATCHER.assertMatch(created, expectedTo);
-        }
+        assertThat(createdList)
+                .usingRecursiveFieldByFieldElementComparator()
+                .hasSameElementsAs(VoteMapper.toTos(VOTES.stream()
+                        .filter(filter)
+                        .toList()));
     }
 
     @Test
