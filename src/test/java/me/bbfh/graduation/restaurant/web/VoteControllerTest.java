@@ -4,6 +4,7 @@ import me.bbfh.graduation.common.util.DateTimeUtil;
 import me.bbfh.graduation.common.util.JsonUtil;
 import me.bbfh.graduation.restaurant.mapper.VoteMapper;
 import me.bbfh.graduation.restaurant.model.Vote;
+import me.bbfh.graduation.restaurant.to.CountedVotesTo;
 import me.bbfh.graduation.restaurant.to.VoteTo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import static me.bbfh.graduation.restaurant.VoteTestData.*;
 import static me.bbfh.graduation.user.UserTestData.USER_MAIL;
 import static me.bbfh.graduation.user.UserTestData.user;
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,8 +59,14 @@ public class VoteControllerTest extends AbstractRestaurantControllerTest {
     @WithUserDetails(value = USER_MAIL)
     void getToday() throws Exception {
         DateTimeUtil.overrideCurrentDate(VOTE_DATE);
-        getAllAndAssert(VoteController.REST_URL + "/today",
-                vote -> vote.getVoteDate().equals(DateTimeUtil.getCurrentDate()));
+        ResultActions action = perform(MockMvcRequestBuilders.get(VoteController.REST_URL + "/today"))
+                .andDo(print())
+                .andExpect(status().isOk());
+        List<CountedVotesTo> createdList = VOTE_TODAY_MATCHER.readListFromJson(action);
+
+        assertThat(createdList)
+                .usingRecursiveFieldByFieldElementComparator()
+                .hasSameElementsAs(TODAY_VOTES);
     }
 
     @Test

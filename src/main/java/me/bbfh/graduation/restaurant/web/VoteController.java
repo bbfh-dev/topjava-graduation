@@ -12,6 +12,7 @@ import me.bbfh.graduation.restaurant.model.Menu;
 import me.bbfh.graduation.restaurant.model.Vote;
 import me.bbfh.graduation.restaurant.repository.MenuRepository;
 import me.bbfh.graduation.restaurant.repository.VoteRepository;
+import me.bbfh.graduation.restaurant.to.CountedVotesTo;
 import me.bbfh.graduation.restaurant.to.VoteTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,8 +40,14 @@ public class VoteController {
     }
 
     @GetMapping("today")
-    public List<VoteTo> getToday() {
-        return VoteMapper.toTos(voteRepository.getByUserIdAndDate(DateTimeUtil.getCurrentDate()));
+    public List<CountedVotesTo> getToday() {
+        List<Vote> votes = voteRepository.getByDate(DateTimeUtil.getCurrentDate());
+
+        return votes.stream()
+                .collect(Collectors.groupingBy(vote -> vote.getMenu().getId(), Collectors.counting()))
+                .entrySet().stream()
+                .map(e -> new CountedVotesTo(e.getKey(), e.getValue().intValue()))
+                .toList();
     }
 
     @PostMapping
@@ -49,7 +57,7 @@ public class VoteController {
         Menu menu = menuRepository.getByRestaurantIdAndDate(userVoteTo.getRestaurantId(), DateTimeUtil.getCurrentDate())
                 .orElseThrow(() -> new NotFoundException("There is no today's Menu for restaurant id=" + userVoteTo.getRestaurantId()));
 
-        Vote existingVote = voteRepository.getByUserIdAndDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
+        Vote existingVote = voteRepository.getByDate(authUser.getUser().getId(), DateTimeUtil.getCurrentDate());
         if (existingVote != null) {
             throw new IllegalRequestDataException("Already casted a vote with id=" + existingVote.getId());
         }

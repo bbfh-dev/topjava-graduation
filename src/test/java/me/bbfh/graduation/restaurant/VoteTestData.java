@@ -2,6 +2,7 @@ package me.bbfh.graduation.restaurant;
 
 import me.bbfh.graduation.MatcherFactory;
 import me.bbfh.graduation.restaurant.model.Vote;
+import me.bbfh.graduation.restaurant.to.CountedVotesTo;
 import me.bbfh.graduation.restaurant.to.VoteTo;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import static me.bbfh.graduation.user.UserTestData.user;
 
 public class VoteTestData {
     public static final MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class);
+    public static final MatcherFactory.Matcher<CountedVotesTo> VOTE_TODAY_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(CountedVotesTo.class);
 
     private static final int VOTE1_ID = 1;
 
@@ -26,6 +28,10 @@ public class VoteTestData {
     public static final Vote UPDATED_VOTE = new Vote(null, NEW_VOTE_DATE, user, MENUS.get(1));
 
     public static final List<Vote> VOTES = List.of(VOTE_1, VOTE_2);
+
+    public static final List<CountedVotesTo> TODAY_VOTES = List.of(
+            new CountedVotesTo(1, 2)
+    );
 
     public static VoteTo.RestTo getNewVote() {
         return new VoteTo.RestTo(RESTAURANT_1.getId());
