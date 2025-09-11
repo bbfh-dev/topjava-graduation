@@ -72,11 +72,11 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
                 .andExpect(status().isOk());
 
         MenuTo created = MENU_TO_MATCHER.readFromJson(action);
-        MenuTo expected = MenuUtil.getToFetchDishes(MENUS.getFirst(), dishRepository);
+        MenuTo expected = MenuUtil.getToFetchDishes(MENUS.getFirst());
         expected.setId(created.getId());
 
         MENU_TO_MATCHER.assertMatch(created, expected);
-        MENU_TO_MATCHER.assertMatch(MenuUtil.getToFetchDishes(menuRepository.getExisted(created.id()), dishRepository), expected);
+        MENU_TO_MATCHER.assertMatch(MenuUtil.getToFetchDishes(menuRepository.getExisted(created.id())), expected);
     }
 
     @Test
