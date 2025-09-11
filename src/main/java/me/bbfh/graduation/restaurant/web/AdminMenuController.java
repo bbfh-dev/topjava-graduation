@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -55,9 +56,7 @@ public class AdminMenuController {
         log.info("create {}", menuTo);
         checkNew(menuTo);
 
-        assert menuTo.getRestaurantId() != null;
         Menu menu = menuRepository.save(MenuMapper.toEntity(menuTo, restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
-        assert menuTo.getDishes() != null;
         List<Dish> dishes = menuTo.getDishes().stream()
                 .map(dishTo -> dishRepository.save(DishMapper.toEntity(dishTo, menu)))
                 .toList();
@@ -79,14 +78,12 @@ public class AdminMenuController {
             throw new IllegalRequestDataException("Can only update a Menu that already exists.");
         }
 
-        assert menuTo.getRestaurantId() != null;
         Menu menu = menuRepository.save(MenuMapper.toEntity(menuTo,
                 restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
         Map<Integer, Dish> databaseDishes =
                 dishRepository.getAll(menu.getId()).stream()
                         .collect(Collectors.toMap(Dish::getId, dish -> dish));
 
-        assert menuTo.getDishes() != null;
         List<Dish> dishes = menuTo.getDishes().stream().map(dishTo -> {
             databaseDishes.remove(dishTo.getId());
             return dishRepository.save(DishMapper.toEntity(dishTo, menu));

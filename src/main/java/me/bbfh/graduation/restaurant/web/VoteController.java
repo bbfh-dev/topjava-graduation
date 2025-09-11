@@ -75,7 +75,6 @@ public class VoteController {
                     + DateTimeUtil.VOTE_TIME_LIMIT + " local time");
         }
 
-        assert userVoteTo.getRestaurantId() != null;
         Menu menu = menuRepository.getByRestaurantIdAndDate(userVoteTo.getRestaurantId(), DateTimeUtil.getCurrentDate())
                 .orElseThrow(() -> new NotFoundException("Provided menu doesn't exist with restaurant id=" + userVoteTo.getRestaurantId()));
 
