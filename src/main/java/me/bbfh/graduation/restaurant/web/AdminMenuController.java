@@ -80,7 +80,8 @@ public class AdminMenuController {
         Menu updatedMenu = menuRepository.save(MenuMapper.toEntity(menuTo,
                 restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
 
-        // Delete orphans
+        // Delete orphans.
+        // Because a new Menu is created instead of modifying the [originalMenu] it isn't done automatically.
         originalDishes.forEach(originalDish -> {
             if (!updatedMenu.getDishes().contains(originalDish)) {
                 dishRepository.deleteById(originalDish.getId());
