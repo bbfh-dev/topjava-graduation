@@ -87,7 +87,6 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
         MenuTo newTo = getNewTo();
         assertNotNull(newTo.getRestaurantId());
         Restaurant restaurantRef = restaurantRepository.getReferenceById(newTo.getRestaurantId());
-        Menu newMenu = MenuMapper.toEntity(newTo, restaurantRef);
 
         ResultActions action = perform(MockMvcRequestBuilders.post(AdminMenuController.REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -101,6 +100,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
 
         newTo.setId(newId);
         assertNotNull(newTo.getDishes());
+        assertNotNull(createdTo.getDishes());
         Map<String, DishTo> createdByName = createdTo.getDishes().stream()
                 .collect(Collectors.toMap(DishTo::getName, Function.identity()));
 
@@ -110,7 +110,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
             dishTo.setId(created.getId());
         }
 
-        newMenu = MenuMapper.toEntity(newTo, restaurantRef);
+        Menu newMenu = MenuMapper.toEntity(newTo, restaurantRef);
         newMenu.setId(newId);
 
         MENU_TO_MATCHER.assertMatch(createdTo, newTo);
