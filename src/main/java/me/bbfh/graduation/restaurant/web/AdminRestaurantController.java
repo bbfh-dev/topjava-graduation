@@ -3,7 +3,6 @@ package me.bbfh.graduation.restaurant.web;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
-import me.bbfh.graduation.common.validation.ValidationUtil;
 import me.bbfh.graduation.restaurant.mapper.RestaurantMapper;
 import me.bbfh.graduation.restaurant.model.Restaurant;
 import me.bbfh.graduation.restaurant.repository.RestaurantRepository;
@@ -37,20 +36,20 @@ public class AdminRestaurantController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ResponseEntity<Restaurant> create(@Valid @RequestBody RestaurantTo restaurantTo) {
+    public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurantTo) {
         log.info("create {}", restaurantTo);
         checkNew(restaurantTo);
         Restaurant created = repository.save(RestaurantMapper.toEntity(restaurantTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath().path(REST_URL).build().toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return ResponseEntity.created(uriOfNewResource).body(RestaurantMapper.toTo(created));
     }
 
     @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     public RestaurantTo update(@PathVariable int restaurantId,
-                                             @RequestBody @Valid RestaurantTo restaurantTo,
-                                             @AuthenticationPrincipal AuthUser authUser) {
+                               @RequestBody @Valid RestaurantTo restaurantTo,
+                               @AuthenticationPrincipal AuthUser authUser) {
         log.info("update {} by {}", restaurantTo, authUser);
         assureIdConsistent(restaurantTo, restaurantId);
         Restaurant restaurant = RestaurantMapper.toEntity(restaurantTo);
