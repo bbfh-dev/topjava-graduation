@@ -2,6 +2,7 @@ package me.bbfh.graduation.user.web;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import me.bbfh.graduation.user.model.User;
@@ -24,6 +25,7 @@ public abstract class AbstractUserController {
         binder.addValidators(emailValidator);
     }
 
+    @Cacheable(value = "users", key = "#id")
     public User get(int id) {
         log.info("get {}", id);
         return repository.getExisted(id);

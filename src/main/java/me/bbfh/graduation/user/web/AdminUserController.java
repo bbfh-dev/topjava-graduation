@@ -1,6 +1,7 @@
 package me.bbfh.graduation.user.web;
 
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +19,6 @@ import static me.bbfh.graduation.common.validation.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-// TODO: cache only most requested, seldom changed data!
 public class AdminUserController extends AbstractUserController {
 
     static final String REST_URL = "/api/admin/users";
@@ -37,6 +37,7 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @GetMapping
+    @Cacheable(value = "users")
     public List<User> getAll() {
         log.info("getAll");
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name", "email"));
@@ -62,6 +63,7 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @GetMapping("/by-email")
+    @Cacheable(value = "users", key = "#email")
     public User getByEmail(@RequestParam String email) {
         log.info("getByEmail {}", email);
         return repository.getExistedByEmail(email);

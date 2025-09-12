@@ -2,6 +2,7 @@ package me.bbfh.graduation.user.web;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +23,12 @@ import static me.bbfh.graduation.common.validation.ValidationUtil.checkNew;
 @RestController
 @RequestMapping(value = ProfileController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-// TODO: cache only most requested data!
 public class ProfileController extends AbstractUserController {
 
     static final String REST_URL = "/api/profile";
 
     @GetMapping
+    @Cacheable(value = "users", key = "#authUser")
     public User get(@AuthenticationPrincipal AuthUser authUser) {
         log.info("get {}", authUser);
         return authUser.getUser();
