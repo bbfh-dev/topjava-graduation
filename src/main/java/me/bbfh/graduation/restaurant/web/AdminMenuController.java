@@ -3,7 +3,7 @@ package me.bbfh.graduation.restaurant.web;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.bbfh.graduation.app.AuthUser;
-import me.bbfh.graduation.common.error.IllegalRequestDataException;
+import me.bbfh.graduation.common.error.NotFoundException;
 import me.bbfh.graduation.restaurant.MenuUtil;
 import me.bbfh.graduation.restaurant.mapper.DishMapper;
 import me.bbfh.graduation.restaurant.mapper.MenuMapper;
@@ -23,8 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.bbfh.graduation.common.validation.ValidationUtil.assureIdConsistent;
@@ -71,27 +70,24 @@ public class AdminMenuController {
         log.info("update {}", menuTo);
         assureIdConsistent(menuTo, menuId);
 
-        if (!menuRepository.existsById(menuTo.getId())) {
-            throw new IllegalRequestDataException("Can only update a Menu that already exists.");
-        }
+        Menu originalMenu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new NotFoundException("Menu not found with id=" + menuId));
+        Set<Dish> originalDishes = originalMenu.getDishes().stream()
+                .map(Dish::new)
+                .collect(Collectors.toSet());
 
         Assert.notNull(menuTo.getRestaurantId(), "restaurant id must be defined");
-        Menu menu = menuRepository.save(MenuMapper.toEntity(menuTo,
+        Menu updatedMenu = menuRepository.save(MenuMapper.toEntity(menuTo,
                 restaurantRepository.getReferenceById(menuTo.getRestaurantId())));
-        Map<Integer, Dish> databaseDishes =
-                dishRepository.getAll(menu.getId()).stream()
-                        .collect(Collectors.toMap(Dish::getId, dish -> dish));
 
-        Assert.notNull(menuTo.getDishes(), "menu dishes must be defined");
-        List<Dish> dishes = menuTo.getDishes().stream().map(dishTo -> {
-            databaseDishes.remove(dishTo.getId());
-            return dishRepository.save(DishMapper.toEntity(dishTo));
-        }).toList();
+        // Delete orphans
+        originalDishes.forEach(originalDish -> {
+            if (!updatedMenu.getDishes().contains(originalDish)) {
+                dishRepository.deleteById(originalDish.getId());
+            }
+        });
 
-        // Delete dishes that are no longer referenced
-        databaseDishes.forEach((id, dish) -> dishRepository.delete(dish));
-
-        return MenuMapper.toTo(menu, dishes.stream()
+        return MenuMapper.toTo(updatedMenu, updatedMenu.getDishes().stream()
                 .map(DishMapper::toTo)
                 .collect(Collectors.toSet()));
     }

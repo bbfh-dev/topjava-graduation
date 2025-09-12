@@ -165,7 +165,7 @@ public class MenuControllerTest extends AbstractRestaurantControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isNotFound())
                 .andReturn();
     }
 
